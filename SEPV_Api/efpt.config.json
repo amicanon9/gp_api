@@ -1,0 +1,129 @@
+﻿{
+   "CodeGenerationMode": 2,
+   "ContextClassName": "GreenPowerContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": null,
+   "OutputContextPath": "",
+   "OutputPath": "Models\/GreenPower\/",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "SEPV_Api",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 0,
+   "SelectedToBeGenerated": 0,
+   "Tables": [
+      {
+         "Name": "[dbo].[bank_branch_info]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[bank_info]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[books_menus]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[code_lookup]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[code_lookup_source]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[login_info]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[login_info_roles]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[login_menus]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[login_roles]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[login_roles_menus]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[PPBasicInfo]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[PPMeterNoInfo]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[PPPowerNoInfo]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[PSBankData]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[PSBasicInfo]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[PSMeterNoInfo]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[PSPowerNoInfo]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[PSSurplusData]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[PSSurplusInfo]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ServiceNoDetailData]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ServiceNoDetailInfo]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ServiceNoInfo]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[set_of_books]",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": "sunedge-sql3.GreenPower.dbo1",
+   "UncountableWords": null,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": false,
+   "UseDateOnlyTimeOnly": false,
+   "UseDbContextSplitting": false,
+   "UseFluentApiOnly": true,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": false,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UseSchemaFolders": false,
+   "UseSpatial": false,
+   "UseT4": false
+}
