@@ -23,15 +23,15 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[books_menus]",
-         "ObjectType": 0
-      },
-      {
          "Name": "[dbo].[code_lookup]",
          "ObjectType": 0
       },
       {
          "Name": "[dbo].[code_lookup_source]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CustomerPLM]",
          "ObjectType": 0
       },
       {
@@ -64,6 +64,10 @@
       },
       {
          "Name": "[dbo].[PPPowerNoInfo]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ProjectPLM]",
          "ObjectType": 0
       },
       {
@@ -107,7 +111,7 @@
          "ObjectType": 0
       }
    ],
-   "UiHint": "sunedge-sql3.GreenPower.dbo1",
+   "UiHint": "laptop-3s16sk5h\\test.GreenPower.dbo",
    "UncountableWords": null,
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,

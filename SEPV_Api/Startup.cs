@@ -71,6 +71,7 @@ namespace SEPV_Api
             services.AddTransient<IImportService, ImportService>();
             services.AddTransient<IBankBranchInfoService, BankBranchInfoService>();
             services.AddTransient<IPsbankDataService, PsbankDataService>();
+            services.AddTransient<IProjectPlmService, ProjectPlmService>();
             // services.AddScoped
 
             services.AddDbContext<GreenPowerContext>(option => option.UseSqlServer(Configuration.GetConnectionString(nameof(GreenPowerContext))));

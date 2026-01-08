@@ -20,9 +20,9 @@ namespace SEPV_Api.Models.GreenPower
 
         public virtual DbSet<BankBranchInfo> BankBranchInfo { get; set; }
         public virtual DbSet<BankInfo> BankInfo { get; set; }
-        public virtual DbSet<BooksMenus> BooksMenus { get; set; }
         public virtual DbSet<CodeLookup> CodeLookup { get; set; }
         public virtual DbSet<CodeLookupSource> CodeLookupSource { get; set; }
+        public virtual DbSet<CustomerPlm> CustomerPlm { get; set; }
         public virtual DbSet<LoginInfo> LoginInfo { get; set; }
         public virtual DbSet<LoginInfoRoles> LoginInfoRoles { get; set; }
         public virtual DbSet<LoginMenus> LoginMenus { get; set; }
@@ -31,6 +31,7 @@ namespace SEPV_Api.Models.GreenPower
         public virtual DbSet<PpbasicInfo> PpbasicInfo { get; set; }
         public virtual DbSet<PpmeterNoInfo> PpmeterNoInfo { get; set; }
         public virtual DbSet<PppowerNoInfo> PppowerNoInfo { get; set; }
+        public virtual DbSet<ProjectPlm> ProjectPlm { get; set; }
         public virtual DbSet<PsbankData> PsbankData { get; set; }
         public virtual DbSet<PsbasicInfo> PsbasicInfo { get; set; }
         public virtual DbSet<PsmeterNoInfo> PsmeterNoInfo { get; set; }
@@ -106,29 +107,6 @@ namespace SEPV_Api.Models.GreenPower
                 entity.Property(e => e.Disable).HasColumnName("disable");
             });
 
-            modelBuilder.Entity<BooksMenus>(entity =>
-            {
-                entity.ToTable("books_menus");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.BookId).HasColumnName("book_id");
-
-                entity.Property(e => e.MenuId).HasColumnName("menu_id");
-
-                entity.HasOne(d => d.Book)
-                    .WithMany(p => p.BooksMenus)
-                    .HasForeignKey(d => d.BookId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_books_menus_set_of_books");
-
-                entity.HasOne(d => d.Menu)
-                    .WithMany(p => p.BooksMenus)
-                    .HasForeignKey(d => d.MenuId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_books_menus_login_menus");
-            });
-
             modelBuilder.Entity<CodeLookup>(entity =>
             {
                 entity.HasKey(e => new { e.SourceTable, e.Code });
@@ -170,6 +148,74 @@ namespace SEPV_Api.Models.GreenPower
                 entity.Property(e => e.Description)
                     .HasMaxLength(50)
                     .HasColumnName("description");
+            });
+
+            modelBuilder.Entity<CustomerPlm>(entity =>
+            {
+                entity.ToTable("CustomerPLM");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Contact)
+                    .HasMaxLength(50)
+                    .HasColumnName("contact");
+
+                entity.Property(e => e.Contact2)
+                    .HasMaxLength(50)
+                    .HasColumnName("contact2");
+
+                entity.Property(e => e.Contact3)
+                    .HasMaxLength(50)
+                    .HasColumnName("contact3");
+
+                entity.Property(e => e.Contact4)
+                    .HasMaxLength(50)
+                    .HasColumnName("contact4");
+
+                entity.Property(e => e.Contact5)
+                    .HasMaxLength(50)
+                    .HasColumnName("contact5");
+
+                entity.Property(e => e.DecisionLevel)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("decision_level");
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("description");
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(50)
+                    .HasColumnName("name");
+
+                entity.Property(e => e.TaxIdNo).HasColumnName("tax_id_no");
+
+                entity.Property(e => e.Telephone)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("telephone");
+
+                entity.Property(e => e.Telephone2)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("telephone2");
+
+                entity.Property(e => e.Telephone3)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("telephone3");
+
+                entity.Property(e => e.Telephone4)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("telephone4");
+
+                entity.Property(e => e.Telephone5)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("telephone5");
             });
 
             modelBuilder.Entity<LoginInfo>(entity =>
@@ -237,11 +283,6 @@ namespace SEPV_Api.Models.GreenPower
                 entity.ToTable("login_menus");
 
                 entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.AnotherName)
-                    .HasMaxLength(25)
-                    .IsUnicode(false)
-                    .HasColumnName("another_name");
 
                 entity.Property(e => e.Description)
                     .HasMaxLength(50)
@@ -441,6 +482,96 @@ namespace SEPV_Api.Models.GreenPower
                     .HasConstraintName("FK_PPPowerNoInfo_PPBasicInfo");
             });
 
+            modelBuilder.Entity<ProjectPlm>(entity =>
+            {
+                entity.ToTable("ProjectPLM");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AgsStatus)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("ags_status");
+
+                entity.Property(e => e.CloseDate)
+                    .HasColumnType("date")
+                    .HasColumnName("close_date");
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_at")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.CustomerId).HasColumnName("customer_id");
+
+                entity.Property(e => e.ExistingCad)
+                    .HasMaxLength(200)
+                    .HasColumnName("existing_cad");
+
+                entity.Property(e => e.ExistingPlm)
+                    .HasMaxLength(100)
+                    .HasColumnName("existing_plm");
+
+                entity.Property(e => e.IndustryCrm)
+                    .HasMaxLength(100)
+                    .HasColumnName("industry_crm");
+
+                entity.Property(e => e.IsAgsBooking).HasColumnName("is_ags_booking");
+
+                entity.Property(e => e.IsSystemChecked)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("is_system_checked");
+
+                entity.Property(e => e.Month).HasColumnName("month");
+
+                entity.Property(e => e.NetToDsAmount)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("net_to_ds_amount");
+
+                entity.Property(e => e.Quarter)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .HasColumnName("quarter");
+
+                entity.Property(e => e.RfqToClientAmount)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("rfq_to_client_amount");
+
+                entity.Property(e => e.SalesOwner)
+                    .HasMaxLength(100)
+                    .HasColumnName("sales_owner");
+
+                entity.Property(e => e.ServiceOwner)
+                    .HasMaxLength(100)
+                    .HasColumnName("service_owner");
+
+                entity.Property(e => e.SolutionMapping)
+                    .HasMaxLength(300)
+                    .HasColumnName("solution_mapping");
+
+                entity.Property(e => e.SystemInquiryChannel)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("system_inquiry_channel");
+
+                entity.Property(e => e.UnderControlLongshotYearQ)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("under_control_longshot_year_q");
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updated_at");
+
+                entity.Property(e => e.Year).HasColumnName("year");
+
+                entity.HasOne(d => d.Customer)
+                    .WithMany(p => p.ProjectPlm)
+                    .HasForeignKey(d => d.CustomerId)
+                    .HasConstraintName("FK_ProjectPLM_CustomerPLM");
+            });
+
             modelBuilder.Entity<PsbankData>(entity =>
             {
                 entity.ToTable("PSBankData");
@@ -501,7 +632,6 @@ namespace SEPV_Api.Models.GreenPower
                     .HasColumnName("email");
 
                 entity.Property(e => e.PsName)
-                    .IsRequired()
                     .HasMaxLength(50)
                     .HasColumnName("ps_name");
 

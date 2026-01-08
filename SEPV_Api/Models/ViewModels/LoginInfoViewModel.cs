@@ -27,7 +27,7 @@ namespace Gp_Api.Models.ViewModels
         public string Password { get; set; }
         [Required]
         public string Description { get; set; }
-        [Required]
+        
         public bool Disabled { get; set; }
 
         public string Company_name { get; set; }

@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Gp_Api.IServices;
+using Gp_Api.Models.ViewModels;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using SEPV_Api.Models.GreenPower;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using SEPV_Api.Models.GreenPower;
-using Gp_Api.Models.ViewModels;
-using Gp_Api.IServices;
-using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -80,7 +81,7 @@ namespace Gp_Api.Services
 
         public LoginRoles GetLoginRoles(int role_id)
         {
-            var data = _GreenPowerContext.LoginRoles.FirstOrDefault(t => t.Id == role_id);
+            var data = _GreenPowerContext.LoginRoles.Include(r => r.Book).FirstOrDefault(t => t.Id == role_id);
             return data;
         }
 

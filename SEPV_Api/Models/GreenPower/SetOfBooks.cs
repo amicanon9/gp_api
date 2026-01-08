@@ -9,7 +9,6 @@ namespace SEPV_Api.Models.GreenPower
     {
         public SetOfBooks()
         {
-            BooksMenus = new HashSet<BooksMenus>();
             LoginInfo = new HashSet<LoginInfo>();
             LoginRoles = new HashSet<LoginRoles>();
             PpbasicInfo = new HashSet<PpbasicInfo>();
@@ -21,7 +20,6 @@ namespace SEPV_Api.Models.GreenPower
         public string Name { get; set; }
         public string Description { get; set; }
 
-        public virtual ICollection<BooksMenus> BooksMenus { get; set; }
         public virtual ICollection<LoginInfo> LoginInfo { get; set; }
         public virtual ICollection<LoginRoles> LoginRoles { get; set; }
         public virtual ICollection<PpbasicInfo> PpbasicInfo { get; set; }
