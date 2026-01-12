@@ -11,6 +11,7 @@ namespace SEPV_Api.Models.GreenPower
         {
             LoginInfoRoles = new HashSet<LoginInfoRoles>();
             LoginRolesMenus = new HashSet<LoginRolesMenus>();
+            ProjectPlm = new HashSet<ProjectPlm>();
         }
 
         public int Id { get; set; }
@@ -24,5 +25,6 @@ namespace SEPV_Api.Models.GreenPower
         public virtual SetOfBooks Book { get; set; }
         public virtual ICollection<LoginInfoRoles> LoginInfoRoles { get; set; }
         public virtual ICollection<LoginRolesMenus> LoginRolesMenus { get; set; }
+        public virtual ICollection<ProjectPlm> ProjectPlm { get; set; }
     }
 }

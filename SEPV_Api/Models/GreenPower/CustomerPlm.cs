@@ -27,6 +27,9 @@ namespace SEPV_Api.Models.GreenPower
         public string Telephone5 { get; set; }
         public string DecisionLevel { get; set; }
         public string Description { get; set; }
+        public string IndustryCrm { get; set; }
+        public string ExistingPlm { get; set; }
+        public string ExistingCad { get; set; }
 
         public virtual ICollection<ProjectPlm> ProjectPlm { get; set; }
     }

@@ -10,11 +10,11 @@ namespace Gp_Api.Services
 {
     public class LoginRolesService: ILoginRolesService
     {
-        private readonly GreenPowerContext _GreenPowerContext;
+        private readonly PMSContext _PMSContext;
         private readonly ILoginMenusService _loginMenusService;
-        public LoginRolesService(GreenPowerContext GreenPowerContext, ILoginMenusService loginMenusService)
+        public LoginRolesService(PMSContext PMSContext, ILoginMenusService loginMenusService)
         {
-            _GreenPowerContext = GreenPowerContext;
+            _PMSContext = PMSContext;
             _loginMenusService = loginMenusService;
         }
 
@@ -24,8 +24,8 @@ namespace Gp_Api.Services
 
         public List<LoginRolesViewModel> GetAllData()
         {
-            var check = _GreenPowerContext.LoginInfoRoles.Where(a => a.InfoId == UserId && a.RoleId == RoleId).Select(b => b.Role).FirstOrDefault();
-            var query = _GreenPowerContext.LoginRoles.Select(t => new LoginRolesViewModel
+            var check = _PMSContext.LoginInfoRoles.Where(a => a.InfoId == UserId && a.RoleId == RoleId).Select(b => b.Role).FirstOrDefault();
+            var query = _PMSContext.LoginRoles.Select(t => new LoginRolesViewModel
             {
                 Id = t.Id,
                 Book_id = t.BookId,
@@ -47,9 +47,9 @@ namespace Gp_Api.Services
             {
                 var menus = new List<LoginMenus>();
                 if (!data.Is_admin)
-                    menus = _GreenPowerContext.LoginRolesMenus.Where(a => a.RoleId == data.Id).Select(b => b.Menu).Where(c => c.IsNode == true).ToList();
+                    menus = _PMSContext.LoginRolesMenus.Where(a => a.RoleId == data.Id).Select(b => b.Menu).Where(c => c.IsNode == true).ToList();
                 else
-                    menus = _GreenPowerContext.LoginMenus.Where(a => a.IsNode == true).ToList();
+                    menus = _PMSContext.LoginMenus.Where(a => a.IsNode == true).ToList();
                 data.Menus = menus;
             }
             return allData;
@@ -57,7 +57,7 @@ namespace Gp_Api.Services
 
         public LoginRolesViewModel GetData(int id)
         {
-            var data = _GreenPowerContext.LoginRoles.Select(t => new LoginRolesViewModel
+            var data = _PMSContext.LoginRoles.Select(t => new LoginRolesViewModel
             {
                 Id = t.Id,
                 Book_id = t.BookId,
@@ -67,21 +67,21 @@ namespace Gp_Api.Services
                 Is_admin = t.IsAdmin,
                 Company_name = t.Book.Name,
                 Permission_level = t.PermissionLevel,
-                Menus = _GreenPowerContext.LoginRolesMenus.Where(a => a.RoleId == t.Id).Select(b => b.Menu).ToList()
+                Menus = _PMSContext.LoginRolesMenus.Where(a => a.RoleId == t.Id).Select(b => b.Menu).ToList()
             }).Where(a => a.Id == id && a.Book_id == BookId).FirstOrDefault();
 
             var menus = new List<LoginMenus>();
             if (!data.Is_admin)
-                menus = _GreenPowerContext.LoginRolesMenus.Where(a => a.RoleId == data.Id).Select(b => b.Menu).Where(c => c.IsNode == true).ToList();
+                menus = _PMSContext.LoginRolesMenus.Where(a => a.RoleId == data.Id).Select(b => b.Menu).Where(c => c.IsNode == true).ToList();
             else
-                menus = _GreenPowerContext.LoginMenus.Where(a => a.IsNode == true).ToList();
+                menus = _PMSContext.LoginMenus.Where(a => a.IsNode == true).ToList();
             data.Menus = menus;
             return data;
         }
 
         public void InsertData(LoginRolesViewModel viewModel)
         {
-            var check = _GreenPowerContext.LoginInfoRoles.Where(a => a.InfoId == UserId && a.RoleId == RoleId).Select(b => b.Role).FirstOrDefault();
+            var check = _PMSContext.LoginInfoRoles.Where(a => a.InfoId == UserId && a.RoleId == RoleId).Select(b => b.Role).FirstOrDefault();
             
             var data = new LoginRoles
             {
@@ -96,8 +96,8 @@ namespace Gp_Api.Services
             {
                 data.IsAdmin = false;
             }
-            _GreenPowerContext.LoginRoles.Add(data);
-            _GreenPowerContext.SaveChanges();
+            _PMSContext.LoginRoles.Add(data);
+            _PMSContext.SaveChanges();
             if (viewModel.Menus != null)
             {
                 insertMenus(data.Id,viewModel);
@@ -106,7 +106,7 @@ namespace Gp_Api.Services
 
         private void insertMenus(int roleid,LoginRolesViewModel viewModel)
         {
-            var myId = _GreenPowerContext.LoginRoles
+            var myId = _PMSContext.LoginRoles
                 .Where(a => a.BookId == BookId && a.RoleName == viewModel.Role_name).Select(b => b.Id).FirstOrDefault();
             foreach(var menu in viewModel.Menus)
             {
@@ -115,11 +115,11 @@ namespace Gp_Api.Services
                     RoleId = roleid,
                     MenuId = menu.Id
                 };
-                _GreenPowerContext.LoginRolesMenus.Add(menu_data);
+                _PMSContext.LoginRolesMenus.Add(menu_data);
             }
             try
             {
-                _GreenPowerContext.SaveChanges();
+                _PMSContext.SaveChanges();
 
             }
             catch (Exception ex)
@@ -129,17 +129,17 @@ namespace Gp_Api.Services
         }
         public string DeleteData(int id)
         {
-            var data = _GreenPowerContext.LoginRoles.Where(a => a.Id == id).FirstOrDefault();
-            var menus = _GreenPowerContext.LoginRolesMenus.Where(a => a.RoleId == id).ToList();
+            var data = _PMSContext.LoginRoles.Where(a => a.Id == id).FirstOrDefault();
+            var menus = _PMSContext.LoginRolesMenus.Where(a => a.RoleId == id).ToList();
             foreach(var menu in menus)
             {
-                _GreenPowerContext.LoginRolesMenus.Remove(menu);
+                _PMSContext.LoginRolesMenus.Remove(menu);
             }
             
-            _GreenPowerContext.LoginRoles.Remove(data);
+            _PMSContext.LoginRoles.Remove(data);
             try
             {
-                _GreenPowerContext.SaveChanges();
+                _PMSContext.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -152,8 +152,8 @@ namespace Gp_Api.Services
 
         public string EditData(int id, LoginRolesViewModel viewModel)
         {
-            var check = _GreenPowerContext.LoginInfoRoles.Where(a => a.InfoId == UserId && a.RoleId == RoleId).Select(b => b.Role).FirstOrDefault();
-            var data = _GreenPowerContext.LoginRoles.Where(a => a.Id == id).FirstOrDefault();
+            var check = _PMSContext.LoginInfoRoles.Where(a => a.InfoId == UserId && a.RoleId == RoleId).Select(b => b.Role).FirstOrDefault();
+            var data = _PMSContext.LoginRoles.Where(a => a.Id == id).FirstOrDefault();
             
             data.RoleName = viewModel.Role_name ?? data.RoleName;
             data.Description = viewModel.Description ?? data.Description;
@@ -164,10 +164,10 @@ namespace Gp_Api.Services
             {
                 data.IsAdmin = false;
             }
-            var data_menus = _GreenPowerContext.LoginRolesMenus.Where(t => t.RoleId == data.Id).ToList();
+            var data_menus = _PMSContext.LoginRolesMenus.Where(t => t.RoleId == data.Id).ToList();
             foreach(var data_menu in data_menus)
             {
-                _GreenPowerContext.Remove(data_menu);
+                _PMSContext.Remove(data_menu);
             }
             if (viewModel.Menus != null)
             {
@@ -178,12 +178,12 @@ namespace Gp_Api.Services
                         RoleId = data.Id,
                         MenuId = menu.Id
                     };
-                    _GreenPowerContext.LoginRolesMenus.Add(menu_data);
+                    _PMSContext.LoginRolesMenus.Add(menu_data);
                 }
             }
             try
             {
-                _GreenPowerContext.SaveChanges();
+                _PMSContext.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -196,7 +196,7 @@ namespace Gp_Api.Services
 
         public List<LoginRolesViewModel> GetUserRoles(int user_id)
         {
-            return _GreenPowerContext.LoginInfoRoles.Where(t => t.InfoId == user_id).Select(a => a.Role)
+            return _PMSContext.LoginInfoRoles.Where(t => t.InfoId == user_id).Select(a => a.Role)
                 .Where(c => c.Disabled == false).Select(b => new LoginRolesViewModel
                 {
                 Id = b.Id,
@@ -212,8 +212,8 @@ namespace Gp_Api.Services
 
         public List<LoginRolesSelectorViewModel> GetSelector()
         {
-            var check = _GreenPowerContext.LoginInfoRoles.Where(a => a.InfoId == UserId && a.RoleId == RoleId).Select(b => b.Role).FirstOrDefault();
-            var query = _GreenPowerContext.LoginRoles.AsQueryable();
+            var check = _PMSContext.LoginInfoRoles.Where(a => a.InfoId == UserId && a.RoleId == RoleId).Select(b => b.Role).FirstOrDefault();
+            var query = _PMSContext.LoginRoles.AsQueryable();
 
             // 如果不是 admin，就加上 BookId 條件
             if (!check.IsAdmin)

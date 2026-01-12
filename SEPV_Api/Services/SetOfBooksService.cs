@@ -14,16 +14,16 @@ namespace Gp_Api.Services
     {
         public short RoleId { get; set; }
         public short UserId { get; set; }
-        private readonly GreenPowerContext _GreenPowerContext;
-        public SetOfBooksService (GreenPowerContext GreenPowerContext)
+        private readonly PMSContext _PMSContext;
+        public SetOfBooksService (PMSContext PMSContext)
         {
-            _GreenPowerContext = GreenPowerContext;
+            _PMSContext = PMSContext;
         }
 
         public List<SetOfBooksViewModel> GetAllData()
         {
-            var check = _GreenPowerContext.LoginInfoRoles.Where(a => a.InfoId == UserId && a.RoleId == RoleId).Select(b => b.Role).FirstOrDefault();
-            var query = _GreenPowerContext.SetOfBooks.AsQueryable();
+            var check = _PMSContext.LoginInfoRoles.Where(a => a.InfoId == UserId && a.RoleId == RoleId).Select(b => b.Role).FirstOrDefault();
+            var query = _PMSContext.SetOfBooks.AsQueryable();
 
             // 如果不是 admin，就加上 BookId 條件
             if (!check.IsAdmin)
@@ -41,7 +41,7 @@ namespace Gp_Api.Services
 
         public SetOfBooksViewModel GetData(short id)
         {
-            return _GreenPowerContext.SetOfBooks.Select(t => new SetOfBooksViewModel
+            return _PMSContext.SetOfBooks.Select(t => new SetOfBooksViewModel
             {
                 Book_id = t.BookId,
                 Name = t.Name,
@@ -58,18 +58,18 @@ namespace Gp_Api.Services
                 Description = viewModel.Description
             };
 
-            _GreenPowerContext.SetOfBooks.Add(data);
-            _GreenPowerContext.SaveChanges();
+            _PMSContext.SetOfBooks.Add(data);
+            _PMSContext.SaveChanges();
         }
 
         public string DeleteData(int id)
         {
-            var data = _GreenPowerContext.SetOfBooks.Find(id);
+            var data = _PMSContext.SetOfBooks.Find(id);
 
-            _GreenPowerContext.SetOfBooks.Remove(data);
+            _PMSContext.SetOfBooks.Remove(data);
             try
             {
-                _GreenPowerContext.SaveChanges();
+                _PMSContext.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -82,13 +82,13 @@ namespace Gp_Api.Services
 
         public string EditData(short id, SetOfBooksViewModel viewModel)
         {
-            var data = _GreenPowerContext.SetOfBooks.Find(id);
+            var data = _PMSContext.SetOfBooks.Find(id);
             
             data.Name = viewModel.Name ?? data.Name;
             data.Description = viewModel.Description ?? data.Description;
             try
             {
-                _GreenPowerContext.SaveChanges();
+                _PMSContext.SaveChanges();
             }
             catch (Exception ex)
             {

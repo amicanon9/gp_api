@@ -7,11 +7,11 @@ namespace Gp_Api.Services
 {
     public class LoginMenusService: ILoginMenusService
     {
-        private readonly GreenPowerContext _GreenPowerContext;
+        private readonly PMSContext _PMSContext;
 
-        public LoginMenusService(GreenPowerContext GreenPowerContext)
+        public LoginMenusService(PMSContext PMSContext)
         {
-            _GreenPowerContext = GreenPowerContext;
+            _PMSContext = PMSContext;
         }
 
         public short BookId { get; set; }
@@ -20,7 +20,7 @@ namespace Gp_Api.Services
 
         public LoginMenusFormViewModel GetMenu(int user_id, int role_id)
         {
-            var role = _GreenPowerContext.LoginInfoRoles.Where(t => t.RoleId == role_id);
+            var role = _PMSContext.LoginInfoRoles.Where(t => t.RoleId == role_id);
             var role_result = new LoginRoles();
             if (user_id  == -1) role_result =  role.Select(a => a.Role).Where(c => c.Disabled == false).FirstOrDefault();
             else role_result =  role.Where(t => t.InfoId == user_id).Select(a => a.Role).Where(c => c.Disabled == false).FirstOrDefault();
@@ -29,12 +29,12 @@ namespace Gp_Api.Services
             var menus = new List<LoginMenus>();
             if (role_result.IsAdmin)
             {
-                menus = _GreenPowerContext.LoginMenus.Where(t => t.IsNode == true)
+                menus = _PMSContext.LoginMenus.Where(t => t.IsNode == true)
                     .OrderBy(b => b.SeqNo).ToList();
             }
             else
             {
-                menus = _GreenPowerContext.LoginRolesMenus
+                menus = _PMSContext.LoginRolesMenus
                     .Where(t => t.RoleId == role_result.Id).Select(a => a.Menu)
                     .Where(c => c.IsNode == true).OrderBy(b => b.SeqNo).ToList();
             }
@@ -90,7 +90,7 @@ namespace Gp_Api.Services
         }
         private LoginMenusViewModel GetChild(int parent_id, List<LoginMenus> menus, string prev_url = "")
         {
-            var parent = _GreenPowerContext.LoginMenus.Where(t => t.Id == parent_id).FirstOrDefault();
+            var parent = _PMSContext.LoginMenus.Where(t => t.Id == parent_id).FirstOrDefault();
 
             var menu = menus.Where(t => t.Parent == parent_id).ToList()
                 .OrderBy(b => b.SeqNo);
@@ -129,13 +129,13 @@ namespace Gp_Api.Services
         }
         public List<LoginMenus> GetRoleMenus(int user_id, int role_id)
         {
-            var menus = _GreenPowerContext.LoginMenus.ToList();
-            var check = _GreenPowerContext.LoginInfoRoles.Where(a => a.InfoId == user_id && a.RoleId == role_id).Select(b => b.Role).FirstOrDefault();
+            var menus = _PMSContext.LoginMenus.ToList();
+            var check = _PMSContext.LoginInfoRoles.Where(a => a.InfoId == user_id && a.RoleId == role_id).Select(b => b.Role).FirstOrDefault();
             var temp = new List<LoginMenus>();
             if (check != null)
             {
                 if (check.IsAdmin) return menus;
-                var role_menus = _GreenPowerContext.LoginRolesMenus.Where(a => a.RoleId == role_id).Select(b => b.Menu).ToList();
+                var role_menus = _PMSContext.LoginRolesMenus.Where(a => a.RoleId == role_id).Select(b => b.Menu).ToList();
                 foreach (var menu in role_menus)
                 {
                     if (menus.Select(b => b.Id).Contains(menu.Id)) temp.Add(menu);
@@ -145,16 +145,16 @@ namespace Gp_Api.Services
         }
         public List<LoginMenus> GetLoginMenus()
         {
-            var check = _GreenPowerContext.LoginInfoRoles.Where(a => a.InfoId == UserId && a.RoleId == RoleId).Select(b => b.Role).FirstOrDefault();
+            var check = _PMSContext.LoginInfoRoles.Where(a => a.InfoId == UserId && a.RoleId == RoleId).Select(b => b.Role).FirstOrDefault();
             var data = new List<LoginMenus>();
             // 如果不是 admin，就加上 BookId 條件
             if (!check.IsAdmin)
             {
-                data = _GreenPowerContext.LoginRolesMenus.Where(a => a.RoleId == RoleId).Select(e => e.Menu).ToList();
+                data = _PMSContext.LoginRolesMenus.Where(a => a.RoleId == RoleId).Select(e => e.Menu).ToList();
             }
             else
             {
-                data = _GreenPowerContext.LoginMenus.ToList();
+                data = _PMSContext.LoginMenus.ToList();
             }
 
             // 專案轉換

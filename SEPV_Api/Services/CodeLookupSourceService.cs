@@ -9,14 +9,14 @@ namespace Gp_Api.Services
 {
     public class CodeLookupSourceService: ICodeLookupSourceService
     {
-        private readonly GreenPowerContext _GreenPowerContext;
-        public CodeLookupSourceService(GreenPowerContext GreenPowerContext)
+        private readonly PMSContext _PMSContext;
+        public CodeLookupSourceService(PMSContext PMSContext)
         {
-            _GreenPowerContext = GreenPowerContext;
+            _PMSContext = PMSContext;
         }
         public List<CodeLookupSourceViewModel> GetAllData()
         {
-            return _GreenPowerContext.CodeLookupSource.Select(t => new CodeLookupSourceViewModel
+            return _PMSContext.CodeLookupSource.Select(t => new CodeLookupSourceViewModel
             {
                 Source = t.SourceTable,
                 Description = t.Description
@@ -25,7 +25,7 @@ namespace Gp_Api.Services
 
         public List<CodeLookupSourceViewModel> GetData(string source)
         {
-            return _GreenPowerContext.CodeLookupSource.Select(t => new CodeLookupSourceViewModel
+            return _PMSContext.CodeLookupSource.Select(t => new CodeLookupSourceViewModel
             {
                 Source = t.SourceTable,
                 Description = t.Description
@@ -40,18 +40,18 @@ namespace Gp_Api.Services
                 Description = viewModel.Description
             };
 
-            _GreenPowerContext.CodeLookupSource.Add(data);
-            _GreenPowerContext.SaveChanges();
+            _PMSContext.CodeLookupSource.Add(data);
+            _PMSContext.SaveChanges();
         }
 
         public string DeleteData(string source)
         {
-            var data = _GreenPowerContext.CodeLookupSource.Find(source);
+            var data = _PMSContext.CodeLookupSource.Find(source);
             
-            _GreenPowerContext.CodeLookupSource.Remove(data);
+            _PMSContext.CodeLookupSource.Remove(data);
             try
             {
-                _GreenPowerContext.SaveChanges();
+                _PMSContext.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -64,12 +64,12 @@ namespace Gp_Api.Services
 
         public string EditData(string code, CodeLookupSourceViewModel viewModel)
         {
-            var data = _GreenPowerContext.CodeLookupSource.Find(code);
+            var data = _PMSContext.CodeLookupSource.Find(code);
             
             data.Description = viewModel.Description ?? data.Description;
             try
             {
-                _GreenPowerContext.SaveChanges();
+                _PMSContext.SaveChanges();
             }
             catch (Exception ex)
             {

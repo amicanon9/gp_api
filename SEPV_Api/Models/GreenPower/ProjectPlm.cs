@@ -8,6 +8,7 @@ namespace SEPV_Api.Models.GreenPower
     public partial class ProjectPlm
     {
         public int Id { get; set; }
+        public int RoleId { get; set; }
         public int? Year { get; set; }
         public string Quarter { get; set; }
         public int? Month { get; set; }
@@ -15,20 +16,18 @@ namespace SEPV_Api.Models.GreenPower
         public decimal? RfqToClientAmount { get; set; }
         public decimal? NetToDsAmount { get; set; }
         public string SystemInquiryChannel { get; set; }
-        public string IsSystemChecked { get; set; }
+        public bool? IsSystemChecked { get; set; }
         public bool? IsAgsBooking { get; set; }
         public int? CustomerId { get; set; }
-        public string IndustryCrm { get; set; }
-        public string ExistingPlm { get; set; }
-        public string ExistingCad { get; set; }
         public string AgsStatus { get; set; }
         public string UnderControlLongshotYearQ { get; set; }
         public string SolutionMapping { get; set; }
-        public string SalesOwner { get; set; }
-        public string ServiceOwner { get; set; }
+        public int? SalesOwner { get; set; }
+        public int? ServiceOwner { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
         public virtual CustomerPlm Customer { get; set; }
+        public virtual LoginRoles Role { get; set; }
     }
 }

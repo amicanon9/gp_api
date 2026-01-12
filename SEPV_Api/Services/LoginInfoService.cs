@@ -12,12 +12,12 @@ namespace Gp_Api.Services
 {
     public class LoginInfoService : ILoginInfoService
     {
-        private readonly GreenPowerContext _GreenPowerContext;
+        private readonly PMSContext _PMSContext;
         private readonly string _sha256Key;
 
-        public LoginInfoService(GreenPowerContext GreenPowerContext, IConfiguration configuration)
+        public LoginInfoService(PMSContext PMSContext, IConfiguration configuration)
         {
-            _GreenPowerContext = GreenPowerContext;
+            _PMSContext = PMSContext;
             _sha256Key = configuration["HashSettings:Sha256Key"]; // 從 appsettings.json 讀取 key
         }
 
@@ -37,12 +37,12 @@ namespace Gp_Api.Services
 
         public List<LoginInfoViewModel> GetAllData()
         {
-            var check = _GreenPowerContext.LoginInfoRoles
+            var check = _PMSContext.LoginInfoRoles
                 .Where(a => a.InfoId == UserId && a.RoleId == RoleId)
                 .Select(b => b.Role)
                 .FirstOrDefault();
 
-            var query = _GreenPowerContext.LoginInfo
+            var query = _PMSContext.LoginInfo
                 .Select(t => new LoginInfoViewModel
                 {
                     Id = t.Id,
@@ -74,7 +74,7 @@ namespace Gp_Api.Services
 
         public LoginInfoViewModel GetData(int id)
         {
-            return _GreenPowerContext.LoginInfo
+            return _PMSContext.LoginInfo
                 .Select(t => new LoginInfoViewModel
                 {
                     Id = t.Id,
@@ -109,8 +109,8 @@ namespace Gp_Api.Services
                 Disabled = viewModel.Disabled
             };
 
-            _GreenPowerContext.LoginInfo.Add(data);
-            _GreenPowerContext.SaveChanges();
+            _PMSContext.LoginInfo.Add(data);
+            _PMSContext.SaveChanges();
 
             if (viewModel.Roles != null)
             {
@@ -127,22 +127,22 @@ namespace Gp_Api.Services
                     InfoId = infoid,
                     RoleId = (int)Role.Id
                 };
-                _GreenPowerContext.LoginInfoRoles.Add(role_data);
+                _PMSContext.LoginInfoRoles.Add(role_data);
             }
-            _GreenPowerContext.SaveChanges();
+            _PMSContext.SaveChanges();
         }
 
         public string DeleteData(int id)
         {
-            var data = _GreenPowerContext.LoginInfo.FirstOrDefault(a => a.Id == id);
-            var roles = _GreenPowerContext.LoginInfoRoles.Where(a => a.InfoId == id).ToList();
+            var data = _PMSContext.LoginInfo.FirstOrDefault(a => a.Id == id);
+            var roles = _PMSContext.LoginInfoRoles.Where(a => a.InfoId == id).ToList();
 
-            _GreenPowerContext.LoginInfoRoles.RemoveRange(roles);
-            _GreenPowerContext.LoginInfo.Remove(data);
+            _PMSContext.LoginInfoRoles.RemoveRange(roles);
+            _PMSContext.LoginInfo.Remove(data);
 
             try
             {
-                _GreenPowerContext.SaveChanges();
+                _PMSContext.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -154,15 +154,15 @@ namespace Gp_Api.Services
 
         public string EditData(int id, LoginInfoViewModel viewModel)
         {
-            var data = _GreenPowerContext.LoginInfo.FirstOrDefault(a => a.Id == id);
+            var data = _PMSContext.LoginInfo.FirstOrDefault(a => a.Id == id);
 
             data.Username = viewModel.Username;
             data.Password = string.IsNullOrEmpty(viewModel.Password) ? data.Password : HashPassword(viewModel.Password);
             data.Description = viewModel.Description;
             data.Disabled = viewModel.Disabled;
 
-            var data_roles = _GreenPowerContext.LoginInfoRoles.Where(t => t.InfoId == data.Id).ToList();
-            _GreenPowerContext.LoginInfoRoles.RemoveRange(data_roles);
+            var data_roles = _PMSContext.LoginInfoRoles.Where(t => t.InfoId == data.Id).ToList();
+            _PMSContext.LoginInfoRoles.RemoveRange(data_roles);
 
             if (viewModel.Roles != null)
             {
@@ -175,14 +175,14 @@ namespace Gp_Api.Services
                             InfoId = data.Id,
                             RoleId = (int)Role.Id
                         };
-                        _GreenPowerContext.LoginInfoRoles.Add(role_data);
+                        _PMSContext.LoginInfoRoles.Add(role_data);
                     }
                 }
             }
 
             try
             {
-                _GreenPowerContext.SaveChanges();
+                _PMSContext.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -194,14 +194,14 @@ namespace Gp_Api.Services
 
         public bool ChangePassword(int id, ChangePasswordViewModel viewModel, bool isAdmin = false)
         {
-            var data = _GreenPowerContext.LoginInfo.FirstOrDefault(t => t.Id == id);
+            var data = _PMSContext.LoginInfo.FirstOrDefault(t => t.Id == id);
 
             // 驗證舊密碼
             if (data.Password != HashPassword(viewModel.Old_password) && !isAdmin) return false;
 
             // 設定新密碼
             data.Password = HashPassword(viewModel.New_password);
-            _GreenPowerContext.SaveChanges();
+            _PMSContext.SaveChanges();
 
             return true;
         }

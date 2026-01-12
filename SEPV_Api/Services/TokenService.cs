@@ -13,12 +13,12 @@ namespace Gp_Api.Services
 {
     public class TokenService : ITokenService
     {
-        private readonly GreenPowerContext _GreenPowerContext;
+        private readonly PMSContext _PMSContext;
         private readonly string _sha256Key;
 
-        public TokenService(GreenPowerContext GreenPowerContext, IConfiguration configuration)
+        public TokenService(PMSContext PMSContext, IConfiguration configuration)
         {
-            _GreenPowerContext = GreenPowerContext;
+            _PMSContext = PMSContext;
             _sha256Key = configuration["HashSettings:Sha256Key"]; // 讀取加密 key
         }
 
@@ -36,7 +36,7 @@ namespace Gp_Api.Services
         {
             string hashedPassword = HashPassword(loginViewModel.Password);
 
-            var data = _GreenPowerContext.LoginInfo
+            var data = _PMSContext.LoginInfo
                 .Where(p => p.Username == loginViewModel.Username &&
                             p.Password == hashedPassword &&
                             !p.Disabled)
@@ -52,7 +52,7 @@ namespace Gp_Api.Services
 
         public LoginInfoViewModel GetData(string Username)
         {
-            return _GreenPowerContext.LoginInfo
+            return _PMSContext.LoginInfo
                 .Where(p => p.Username == Username)
                 .Select(
                 t => new LoginInfoViewModel
@@ -69,7 +69,7 @@ namespace Gp_Api.Services
 
         public int GetRoleId(int user_id)
         {
-            var data = _GreenPowerContext.LoginInfoRoles
+            var data = _PMSContext.LoginInfoRoles
                 .Where(t => t.InfoId == user_id)
                 .Select(t => t.Role)
                 .OrderByDescending(a => a.IsAdmin)
@@ -81,13 +81,13 @@ namespace Gp_Api.Services
 
         public LoginRoles GetLoginRoles(int role_id)
         {
-            var data = _GreenPowerContext.LoginRoles.Include(r => r.Book).FirstOrDefault(t => t.Id == role_id);
+            var data = _PMSContext.LoginRoles.Include(r => r.Book).FirstOrDefault(t => t.Id == role_id);
             return data;
         }
 
         public int SwitchRoleId(int user_id, int role_id)
         {
-            var data = _GreenPowerContext.LoginInfoRoles
+            var data = _PMSContext.LoginInfoRoles
                 .FirstOrDefault(t => t.InfoId == user_id && t.RoleId == role_id);
 
             if (data == null) return -1;

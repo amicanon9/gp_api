@@ -17,7 +17,6 @@ using Microsoft.AspNetCore.Authorization;
 using System;
 using Gp_Api.Tools.Converters;
 using Gp_Api.Hubs;
-using static Gp_Api.Services.res;
 
 namespace SEPV_Api
 {
@@ -51,30 +50,16 @@ namespace SEPV_Api
             // Dependency Injection
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<ISetOfBooksService, SetOfBooksService>();
-            services.AddTransient<IServiceNoInfoService, ServiceNoInfoService>();
-            services.AddTransient<IServiceNoDetailInfoService, ServiceNoDetailInfoService>();
-            services.AddTransient<IServiceNoDetailDataService, ServiceNoDetailDataService>();
-            services.AddTransient<IPsbasicInfoService, PsbasicInfoService>();
-            services.AddTransient<IPssurplusInfoService, PssurplusInfoService>();
-            services.AddTransient<IPssurplusDataService, PssurplusDataService>();
-            services.AddTransient<IPpbasicInfoService, PpbasicInfoService>();
-            services.AddTransient<IPspowerNoInfoService, PspowerNoInfoService>();
-            services.AddTransient<IPpmeterNoInfoService, PpmeterNoInfoService>();
-            services.AddTransient<IPppowerNoInfoService, PppowerNoInfoService>();
-            services.AddTransient<IPsmeterNoInfoService, PsmeterNoInfoService>();
             services.AddTransient<ICodeLookupService, CodeLookupService>();
             services.AddTransient<ICodeLookupSourceService, CodeLookupSourceService>();
             services.AddTransient<ILoginInfoService, LoginInfoService>();
             services.AddTransient<ILoginRolesService, LoginRolesService>();
             services.AddTransient<ILoginMenusService, LoginMenusService>();
-            services.AddTransient<IBankInfoService, BankInfoService>();
-            services.AddTransient<IImportService, ImportService>();
-            services.AddTransient<IBankBranchInfoService, BankBranchInfoService>();
-            services.AddTransient<IPsbankDataService, PsbankDataService>();
+            services.AddTransient<ICustomerPlmService, CustomerPlmService>();
             services.AddTransient<IProjectPlmService, ProjectPlmService>();
             // services.AddScoped
 
-            services.AddDbContext<GreenPowerContext>(option => option.UseSqlServer(Configuration.GetConnectionString(nameof(GreenPowerContext))));
+            services.AddDbContext<PMSContext>(option => option.UseSqlServer(Configuration.GetConnectionString(nameof(PMSContext))));
 
             services.AddSingleton<JwtHelpers>();
 

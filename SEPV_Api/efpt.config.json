@@ -1,6 +1,6 @@
 ﻿{
    "CodeGenerationMode": 2,
-   "ContextClassName": "GreenPowerContext",
+   "ContextClassName": "PMSContext",
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
    "FilterSchemas": false,
@@ -14,14 +14,6 @@
    "SelectedHandlebarsLanguage": 0,
    "SelectedToBeGenerated": 0,
    "Tables": [
-      {
-         "Name": "[dbo].[bank_branch_info]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[bank_info]",
-         "ObjectType": 0
-      },
       {
          "Name": "[dbo].[code_lookup]",
          "ObjectType": 0
@@ -55,55 +47,7 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[PPBasicInfo]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[PPMeterNoInfo]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[PPPowerNoInfo]",
-         "ObjectType": 0
-      },
-      {
          "Name": "[dbo].[ProjectPLM]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[PSBankData]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[PSBasicInfo]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[PSMeterNoInfo]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[PSPowerNoInfo]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[PSSurplusData]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[PSSurplusInfo]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[ServiceNoDetailData]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[ServiceNoDetailInfo]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[ServiceNoInfo]",
          "ObjectType": 0
       },
       {
@@ -111,7 +55,7 @@
          "ObjectType": 0
       }
    ],
-   "UiHint": "laptop-3s16sk5h\\test.GreenPower.dbo",
+   "UiHint": "laptop-3s16sk5h\\test.PMS.dbo",
    "UncountableWords": null,
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,

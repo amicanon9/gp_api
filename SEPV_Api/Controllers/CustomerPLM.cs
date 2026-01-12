@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 using SEPV_Api.Models.GreenPower;
 using Gp_Api.Hubs;
 using Gp_Api.IServices;
-using Gp_Api.Services; // 確保引用了包含 ProjectPlmView 的命名空間
+using Gp_Api.Services; // 確保引用了包含 CustomerPlmView 的命名空間
 using System;
 using System.Linq;
 
@@ -13,12 +13,12 @@ namespace Gp_Api.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class ProjectPlmController : ControllerBase
+    public class CustomerPlmController : ControllerBase
     {
-        private readonly IProjectPlmService _service;
+        private readonly ICustomerPlmService _service;
         private readonly IHubContext<ChatHub> _hubContext;
 
-        public ProjectPlmController(IProjectPlmService service, IHubContext<ChatHub> hubContext)
+        public CustomerPlmController(ICustomerPlmService service, IHubContext<ChatHub> hubContext)
         {
             _service = service;
             _hubContext = hubContext;
@@ -45,15 +45,13 @@ namespace Gp_Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(ProjectPlmView data)
+        public IActionResult Post(CustomerPlmView data)
         {
             try
             {
-                var roleIdClaim = User.Claims.FirstOrDefault(t => t.Type == "role_id");
-                if (roleIdClaim != null) _service.RoleId = Int16.Parse(roleIdClaim.Value);
                 _service.InsertData(data);
                 // 透過 SignalR 通知前端更新
-                _hubContext.Clients.All.SendAsync("ProjectPlm", "新增");
+                _hubContext.Clients.All.SendAsync("CustomerPlm", "新增");
                 return Ok(new { result = "inserted" });
             }
             catch (Exception ex)
@@ -70,7 +68,7 @@ namespace Gp_Api.Controllers
                 var res = _service.DeleteData(id);
                 if (res == "OK")
                 {
-                    _hubContext.Clients.All.SendAsync("ProjectPlm", "刪除");
+                    _hubContext.Clients.All.SendAsync("CustomerPlm", "刪除");
                     return Ok(new { result = "deleted" });
                 }
                 else if (res == "NotFound")
@@ -86,14 +84,14 @@ namespace Gp_Api.Controllers
         }
 
         [HttpPatch("{id}")]
-        public IActionResult Edit(int id, ProjectPlmView data)
+        public IActionResult Edit(int id, CustomerPlmView data)
         {
             try
             {
                 var res = _service.EditData(id, data);
                 if (res == "OK")
                 {
-                    _hubContext.Clients.All.SendAsync("ProjectPlm", "更新");
+                    _hubContext.Clients.All.SendAsync("CustomerPlm", "更新");
                     return Ok(new { result = "updated" });
                 }
                 else if (res == "NotFound")

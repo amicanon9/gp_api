@@ -1,10 +1,10 @@
-﻿using SEPV_Api.Models.GreenPower; // 假設這是你的 Entity Framework Models 命名空間
-using Gp_Api.IServices;
+﻿using Gp_Api.IServices;
 using Gp_Api.Models.ViewModels;
+using Microsoft.EntityFrameworkCore; // 確保有引用此項以支援 Include
+using SEPV_Api.Models.GreenPower; // 假設這是你的 Entity Framework Models 命名空間
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore; // 確保有引用此項以支援 Include
 
 namespace Gp_Api.Services
 {
@@ -22,6 +22,7 @@ namespace Gp_Api.Services
     {
         // Project 資訊
         public int id { get; set; }
+        public int role_id { get; set; }
         public int? year { get; set; }
         public string quarter { get; set; }
         public int? month { get; set; }
@@ -29,40 +30,38 @@ namespace Gp_Api.Services
         public decimal? rfq_to_client_amount { get; set; }
         public decimal? net_to_ds_amount { get; set; }
         public string system_inquiry_channel { get; set; }
-        public string is_system_checked { get; set; }
+        public bool? is_system_checked { get; set; }
         public bool? is_ags_booking { get; set; }
-        public string industry_crm { get; set; }
-        public string existing_plm { get; set; }
-        public string existing_cad { get; set; }
+      
         public string ags_status { get; set; }
         public string under_control_longshot_year_q { get; set; }
         public string solution_mapping { get; set; }
-        public string sales_owner { get; set; }
-        public string service_owner { get; set; }
+        public int? sales_owner { get; set; }
+        public int? service_owner { get; set; }
 
         // Customer 關聯資訊
         public int? customer_id { get; set; }
         public string customer_name { get; set; } // 來自 CustomerPLM
-        public int? customer_tax_id { get; set; } // 來自 CustomerPLM
     }
 
     public class ProjectPlmService : IProjectPlmService
     {
         public short RoleId { get; set; }
         public short UserId { get; set; }
-        private readonly GreenPowerContext _GreenPowerContext;
+        private readonly PMSContext _PMSContext;
 
-        public ProjectPlmService(GreenPowerContext GreenPowerContext)
+        public ProjectPlmService(PMSContext PMSContext)
         {
-            _GreenPowerContext = GreenPowerContext;
+            _PMSContext = PMSContext;
         }
 
         public List<ProjectPlmView> GetAllData()
         {
-            // 使用 Select 直接進行投影，這會自動轉換為 SQL Join
-            var data = _GreenPowerContext.ProjectPlm.Select(t => new ProjectPlmView
+            var check = _PMSContext.LoginInfoRoles.Where(a => a.RoleId == RoleId).Select(b => b.Role).FirstOrDefault();
+            var query = _PMSContext.ProjectPlm.Select(t => new ProjectPlmView
             {
                 id = t.Id,
+                role_id= t.RoleId,
                 year = t.Year,
                 quarter = t.Quarter,
                 month = t.Month,
@@ -73,9 +72,7 @@ namespace Gp_Api.Services
                 is_system_checked = t.IsSystemChecked,
                 is_ags_booking = t.IsAgsBooking,
                 customer_id = t.CustomerId,
-                industry_crm = t.IndustryCrm,
-                existing_plm = t.ExistingPlm,
-                existing_cad = t.ExistingCad,
+              
                 ags_status = t.AgsStatus,
                 under_control_longshot_year_q = t.UnderControlLongshotYearQ,
                 solution_mapping = t.SolutionMapping,
@@ -84,16 +81,21 @@ namespace Gp_Api.Services
 
                 // 帶入客戶資訊
                 customer_name = t.Customer != null ? t.Customer.Name : "",
-                customer_tax_id = t.Customer != null ? t.Customer.TaxIdNo : null
-            }).ToList();
+            });
 
-            return data;
+            if (!check.IsAdmin)
+            {
+                query = query.Where(a => a.role_id == RoleId);
+            }
+            var allData = query.ToList();
+            return allData;
         }
 
         public void InsertData(ProjectPlmView viewModel)
         {
             var data = new ProjectPlm
             {
+                RoleId=RoleId,
                 Year = viewModel.year,
                 Quarter = viewModel.quarter,
                 Month = viewModel.month,
@@ -104,9 +106,6 @@ namespace Gp_Api.Services
                 IsSystemChecked = viewModel.is_system_checked,
                 IsAgsBooking = viewModel.is_ags_booking,
                 CustomerId = viewModel.customer_id,
-                IndustryCrm = viewModel.industry_crm,
-                ExistingPlm = viewModel.existing_plm,
-                ExistingCad = viewModel.existing_cad,
                 AgsStatus = viewModel.ags_status,
                 UnderControlLongshotYearQ = viewModel.under_control_longshot_year_q,
                 SolutionMapping = viewModel.solution_mapping,
@@ -114,20 +113,27 @@ namespace Gp_Api.Services
                 ServiceOwner = viewModel.service_owner,
                 CreatedAt = DateTime.Now // 雖然 DB 有 Default，但程式給值較安全
             };
+            try
+            {
+                _PMSContext.ProjectPlm.Add(data);
+                _PMSContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                var a= ex.InnerException != null ? $"{ex.Message}\nInner:{ex.InnerException.Message}" : ex.Message;
+            }
 
-            _GreenPowerContext.ProjectPlm.Add(data);
-            _GreenPowerContext.SaveChanges();
         }
 
         public string DeleteData(int id)
         {
-            var data = _GreenPowerContext.ProjectPlm.Find(id);
+            var data = _PMSContext.ProjectPlm.Find(id);
             if (data == null) return "NotFound";
 
-            _GreenPowerContext.ProjectPlm.Remove(data);
+            _PMSContext.ProjectPlm.Remove(data);
             try
             {
-                _GreenPowerContext.SaveChanges();
+                _PMSContext.SaveChanges();
                 return "OK";
             }
             catch (Exception ex)
@@ -138,7 +144,7 @@ namespace Gp_Api.Services
 
         public string EditData(int id, ProjectPlmView viewModel)
         {
-            var data = _GreenPowerContext.ProjectPlm.Find(id);
+            var data = _PMSContext.ProjectPlm.Find(id);
             if (data == null) return "NotFound";
 
             data.Year = viewModel.year;
@@ -151,9 +157,6 @@ namespace Gp_Api.Services
             data.IsSystemChecked = viewModel.is_system_checked;
             data.IsAgsBooking = viewModel.is_ags_booking;
             data.CustomerId = viewModel.customer_id;
-            data.IndustryCrm = viewModel.industry_crm;
-            data.ExistingPlm = viewModel.existing_plm;
-            data.ExistingCad = viewModel.existing_cad;
             data.AgsStatus = viewModel.ags_status;
             data.UnderControlLongshotYearQ = viewModel.under_control_longshot_year_q;
             data.SolutionMapping = viewModel.solution_mapping;
@@ -163,7 +166,7 @@ namespace Gp_Api.Services
 
             try
             {
-                _GreenPowerContext.SaveChanges();
+                _PMSContext.SaveChanges();
                 return "OK";
             }
             catch (Exception ex)

@@ -10,14 +10,14 @@ namespace Gp_Api.Services
 {
     public class CodeLookupService : ICodeLookupService
     {
-        private readonly GreenPowerContext _GreenPowerContext;
-        public CodeLookupService(GreenPowerContext sEPVContext)
+        private readonly PMSContext _PMSContext;
+        public CodeLookupService(PMSContext sEPVContext)
         {
-            _GreenPowerContext = sEPVContext;
+            _PMSContext = sEPVContext;
         }
         public List<CodeLookupViewModel> GetAllData()
         {
-            return _GreenPowerContext.CodeLookup.Select(t => new CodeLookupViewModel
+            return _PMSContext.CodeLookup.Select(t => new CodeLookupViewModel
             {
                 Source = t.SourceTable,
                 Code = t.Code,
@@ -27,7 +27,7 @@ namespace Gp_Api.Services
 
         public List<CodeLookupViewModel> GetData(string source)
         {
-            return _GreenPowerContext.CodeLookup.Select(t => new CodeLookupViewModel
+            return _PMSContext.CodeLookup.Select(t => new CodeLookupViewModel
             {
                 Source = t.SourceTable,
                 Code = t.Code,
@@ -44,18 +44,18 @@ namespace Gp_Api.Services
                 Description = viewModel.Description
             };
 
-            _GreenPowerContext.CodeLookup.Add(data);
-            _GreenPowerContext.SaveChanges();
+            _PMSContext.CodeLookup.Add(data);
+            _PMSContext.SaveChanges();
         }
 
         public string DeleteData(string code)
         {
-            var data = _GreenPowerContext.CodeLookup.Find(code);
+            var data = _PMSContext.CodeLookup.Find(code);
             
-            _GreenPowerContext.CodeLookup.Remove(data);
+            _PMSContext.CodeLookup.Remove(data);
             try
             {
-                _GreenPowerContext.SaveChanges();
+                _PMSContext.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -68,13 +68,13 @@ namespace Gp_Api.Services
 
         public string EditData(string code, CodeLookupViewModel viewModel)
         {
-            var data = _GreenPowerContext.CodeLookup.Find(code);
+            var data = _PMSContext.CodeLookup.Find(code);
             
             data.SourceTable = viewModel.Source ?? data.SourceTable;
             data.Description = viewModel.Description ?? data.Description;
             try
             {
-                _GreenPowerContext.SaveChanges();
+                _PMSContext.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -87,7 +87,7 @@ namespace Gp_Api.Services
 
         public List<CodeLookupSelectorViewModel> GetSelector(string source)
         {
-            return _GreenPowerContext.CodeLookup.Where(a => a.SourceTable == source)
+            return _PMSContext.CodeLookup.Where(a => a.SourceTable == source)
             .Select(t => new CodeLookupSelectorViewModel
             {
                 Code = t.Code,

@@ -11,9 +11,6 @@ namespace SEPV_Api.Models.GreenPower
         {
             LoginInfo = new HashSet<LoginInfo>();
             LoginRoles = new HashSet<LoginRoles>();
-            PpbasicInfo = new HashSet<PpbasicInfo>();
-            PsbasicInfo = new HashSet<PsbasicInfo>();
-            ServiceNoInfo = new HashSet<ServiceNoInfo>();
         }
 
         public short BookId { get; set; }
@@ -22,8 +19,5 @@ namespace SEPV_Api.Models.GreenPower
 
         public virtual ICollection<LoginInfo> LoginInfo { get; set; }
         public virtual ICollection<LoginRoles> LoginRoles { get; set; }
-        public virtual ICollection<PpbasicInfo> PpbasicInfo { get; set; }
-        public virtual ICollection<PsbasicInfo> PsbasicInfo { get; set; }
-        public virtual ICollection<ServiceNoInfo> ServiceNoInfo { get; set; }
     }
 }
