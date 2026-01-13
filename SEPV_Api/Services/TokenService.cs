@@ -2,7 +2,7 @@
 using Gp_Api.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using SEPV_Api.Models.GreenPower;
+using SEPV_Api.Models.PMS;
 using System;
 using System.Collections.Generic;
 using System.Linq;

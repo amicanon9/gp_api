@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SEPV_Api.Models.GreenPower
+namespace SEPV_Api.Models.PMS
 {
     public partial class SetOfBooks
     {

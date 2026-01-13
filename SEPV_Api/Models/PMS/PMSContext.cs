@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace SEPV_Api.Models.GreenPower
+namespace SEPV_Api.Models.PMS
 {
     public partial class PMSContext : DbContext
     {
@@ -28,6 +28,7 @@ namespace SEPV_Api.Models.GreenPower
         public virtual DbSet<LoginRolesMenus> LoginRolesMenus { get; set; }
         public virtual DbSet<ProjectPlm> ProjectPlm { get; set; }
         public virtual DbSet<SetOfBooks> SetOfBooks { get; set; }
+        public virtual DbSet<WeeklyReportPlm> WeeklyReportPlm { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -417,6 +418,36 @@ namespace SEPV_Api.Models.GreenPower
                     .HasMaxLength(100)
                     .IsUnicode(false)
                     .HasColumnName("name");
+            });
+
+            modelBuilder.Entity<WeeklyReportPlm>(entity =>
+            {
+                entity.ToTable("WeeklyReportPLM");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Content).HasColumnName("content");
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_at")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.ProjectId).HasColumnName("project_id");
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updated_at");
+
+                entity.Property(e => e.Week).HasColumnName("week");
+
+                entity.Property(e => e.Year).HasColumnName("year");
+
+                entity.HasOne(d => d.Project)
+                    .WithMany(p => p.WeeklyReportPlm)
+                    .HasForeignKey(d => d.ProjectId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_WeeklyReport_Project");
             });
 
             OnModelCreatingPartial(modelBuilder);

@@ -1,4 +1,4 @@
-﻿using SEPV_Api.Models.GreenPower;
+﻿using SEPV_Api.Models.PMS;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

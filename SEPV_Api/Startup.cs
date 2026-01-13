@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using SEPV_Api.Models.GreenPower;
+using SEPV_Api.Models.PMS;
 
 using Gp_Api.Helpers;
 using Gp_Api.IServices;
@@ -57,6 +57,7 @@ namespace SEPV_Api
             services.AddTransient<ILoginMenusService, LoginMenusService>();
             services.AddTransient<ICustomerPlmService, CustomerPlmService>();
             services.AddTransient<IProjectPlmService, ProjectPlmService>();
+            services.AddTransient<IWeeklyReportPlmService, WeeklyReportPlmService>();
             // services.AddScoped
 
             services.AddDbContext<PMSContext>(option => option.UseSqlServer(Configuration.GetConnectionString(nameof(PMSContext))));

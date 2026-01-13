@@ -20,7 +20,11 @@ namespace Gp_Api.Controllers
             _tokenService = tokenService;
         }
 
-
+        [HttpGet]
+        public string get()
+        {
+            return "testt";
+        }
         [HttpPost("~/api/login")]
         public IActionResult Login(LoginViewModel loginViewModel)
         {

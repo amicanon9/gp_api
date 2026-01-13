@@ -3,15 +3,15 @@
 using System;
 using System.Collections.Generic;
 
-namespace SEPV_Api.Models.GreenPower
+namespace SEPV_Api.Models.PMS
 {
-    public partial class LoginRolesMenus
+    public partial class LoginInfoRoles
     {
         public int Id { get; set; }
+        public int InfoId { get; set; }
         public int RoleId { get; set; }
-        public int MenuId { get; set; }
 
-        public virtual LoginMenus Menu { get; set; }
+        public virtual LoginInfo Info { get; set; }
         public virtual LoginRoles Role { get; set; }
     }
 }

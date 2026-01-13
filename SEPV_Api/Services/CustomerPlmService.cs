@@ -1,4 +1,4 @@
-﻿using SEPV_Api.Models.GreenPower; // 假設這是你的 Entity Framework Models 命名空間
+﻿using SEPV_Api.Models.PMS; // 假設這是你的 Entity Framework Models 命名空間
 using Gp_Api.IServices;
 using Gp_Api.Models.ViewModels;
 using System;

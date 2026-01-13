@@ -7,7 +7,7 @@
    "IncludeConnectionString": false,
    "ModelNamespace": null,
    "OutputContextPath": "",
-   "OutputPath": "Models\/GreenPower\/",
+   "OutputPath": "Models\/PMS\/",
    "PreserveCasingWithRegex": true,
    "ProjectRootNamespace": "SEPV_Api",
    "Schemas": null,
@@ -52,6 +52,10 @@
       },
       {
          "Name": "[dbo].[set_of_books]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[WeeklyReportPLM]",
          "ObjectType": 0
       }
    ],

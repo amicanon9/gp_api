@@ -3,10 +3,15 @@
 using System;
 using System.Collections.Generic;
 
-namespace SEPV_Api.Models.GreenPower
+namespace SEPV_Api.Models.PMS
 {
     public partial class ProjectPlm
     {
+        public ProjectPlm()
+        {
+            WeeklyReportPlm = new HashSet<WeeklyReportPlm>();
+        }
+
         public int Id { get; set; }
         public int RoleId { get; set; }
         public int? Year { get; set; }
@@ -29,5 +34,6 @@ namespace SEPV_Api.Models.GreenPower
 
         public virtual CustomerPlm Customer { get; set; }
         public virtual LoginRoles Role { get; set; }
+        public virtual ICollection<WeeklyReportPlm> WeeklyReportPlm { get; set; }
     }
 }

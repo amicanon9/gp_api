@@ -1,7 +1,7 @@
 ﻿using Gp_Api.IServices;
 using Gp_Api.Models.ViewModels;
 using Microsoft.EntityFrameworkCore; // 確保有引用此項以支援 Include
-using SEPV_Api.Models.GreenPower; // 假設這是你的 Entity Framework Models 命名空間
+using SEPV_Api.Models.PMS; // 假設這是你的 Entity Framework Models 命名空間
 using System;
 using System.Collections.Generic;
 using System.Linq;

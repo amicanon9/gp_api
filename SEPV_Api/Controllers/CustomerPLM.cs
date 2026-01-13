@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using SEPV_Api.Models.GreenPower;
+using SEPV_Api.Models.PMS;
 using Gp_Api.Hubs;
 using Gp_Api.IServices;
 using Gp_Api.Services; // 確保引用了包含 CustomerPlmView 的命名空間
