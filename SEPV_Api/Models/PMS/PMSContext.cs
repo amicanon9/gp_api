@@ -18,6 +18,7 @@ namespace SEPV_Api.Models.PMS
         {
         }
 
+        public virtual DbSet<CheckinLogs> CheckinLogs { get; set; }
         public virtual DbSet<CodeLookup> CodeLookup { get; set; }
         public virtual DbSet<CodeLookupSource> CodeLookupSource { get; set; }
         public virtual DbSet<CustomerPlm> CustomerPlm { get; set; }
@@ -32,6 +33,42 @@ namespace SEPV_Api.Models.PMS
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<CheckinLogs>(entity =>
+            {
+                entity.HasIndex(e => e.ProjectId, "IX_CheckinLogs_ProjectId");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CheckinTime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("checkin_time");
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_at")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Mode)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("mode");
+
+                entity.Property(e => e.ProjectId).HasColumnName("project_id");
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("status");
+
+                entity.Property(e => e.UserId).HasColumnName("user_id");
+
+                entity.HasOne(d => d.Project)
+                    .WithMany(p => p.CheckinLogs)
+                    .HasForeignKey(d => d.ProjectId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CheckinLogs_ProjectPLM");
+            });
+
             modelBuilder.Entity<CodeLookup>(entity =>
             {
                 entity.HasKey(e => new { e.SourceTable, e.Code });
@@ -426,7 +463,14 @@ namespace SEPV_Api.Models.PMS
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.AgsStatus)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("ags_status");
+
                 entity.Property(e => e.Content).HasColumnName("content");
+
+                entity.Property(e => e.ContentDetail).HasColumnName("content_detail");
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnType("datetime")

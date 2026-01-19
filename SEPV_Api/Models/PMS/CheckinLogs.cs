@@ -5,17 +5,15 @@ using System.Collections.Generic;
 
 namespace SEPV_Api.Models.PMS
 {
-    public partial class WeeklyReportPlm
+    public partial class CheckinLogs
     {
         public int Id { get; set; }
+        public int? UserId { get; set; }
         public int ProjectId { get; set; }
-        public int Year { get; set; }
-        public int Week { get; set; }
-        public string Content { get; set; }
-        public string ContentDetail { get; set; }
-        public string AgsStatus { get; set; }
+        public DateTime CheckinTime { get; set; }
+        public string Mode { get; set; }
+        public string Status { get; set; }
         public DateTime? CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
 
         public virtual ProjectPlm Project { get; set; }
     }

@@ -12,12 +12,12 @@ namespace Gp_Api.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class WeeklyReportPlmController : ControllerBase
+    public class CheckinLogsController : ControllerBase
     {
-        private readonly IWeeklyReportPlmService _service;
+        private readonly ICheckinLogsService _service;
         private readonly IHubContext<ChatHub> _hubContext;
 
-        public WeeklyReportPlmController(IWeeklyReportPlmService service, IHubContext<ChatHub> hubContext)
+        public CheckinLogsController(ICheckinLogsService service, IHubContext<ChatHub> hubContext)
         {
             _service = service;
             _hubContext = hubContext;
@@ -27,7 +27,6 @@ namespace Gp_Api.Controllers
         {
             try
             {
-                // 從 Token 取得 User 資訊並賦值給 Service
                 var roleIdClaim = User.Claims.FirstOrDefault(t => t.Type == "role_id");
                 var userIdClaim = User.Claims.FirstOrDefault(t => t.Type == "user_id");
 
@@ -47,9 +46,11 @@ namespace Gp_Api.Controllers
             try
             {
                 var roleIdClaim = User.Claims.FirstOrDefault(t => t.Type == "role_id");
-                if (roleIdClaim != null) _service.RoleId = Int16.Parse(roleIdClaim.Value);
+                var userIdClaim = User.Claims.FirstOrDefault(t => t.Type == "user_id");
 
-                // 取得特定專案的週報
+                if (roleIdClaim != null) _service.RoleId = Int16.Parse(roleIdClaim.Value);
+                if (userIdClaim != null) _service.UserId = Int16.Parse(userIdClaim.Value);
+
                 return Ok(_service.GetDataById(id));
             }
             catch (Exception ex)
@@ -59,15 +60,18 @@ namespace Gp_Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(WeeklyReportPlmView data)
+        public IActionResult Post(CheckinLogsView data)
         {
             try
             {
                 var roleIdClaim = User.Claims.FirstOrDefault(t => t.Type == "role_id");
+                var userIdClaim = User.Claims.FirstOrDefault(t => t.Type == "user_id");
+
                 if (roleIdClaim != null) _service.RoleId = Int16.Parse(roleIdClaim.Value);
+                if (userIdClaim != null) _service.UserId = Int16.Parse(userIdClaim.Value);
 
                 _service.InsertData(data);
-                _hubContext.Clients.All.SendAsync("WeeklyReportPlm", "新增");
+                _hubContext.Clients.All.SendAsync("CheckinLogs", "新增");
                 return Ok(new { result = "inserted" });
             }
             catch (Exception ex)
@@ -84,7 +88,7 @@ namespace Gp_Api.Controllers
                 var res = _service.DeleteData(id);
                 if (res == "OK")
                 {
-                    _hubContext.Clients.All.SendAsync("WeeklyReportPlm", "刪除");
+                    _hubContext.Clients.All.SendAsync("CheckinLogs", "刪除");
                     return Ok(new { result = "deleted" });
                 }
                 return res == "NotFound" ? NotFound(new { result = "找不到該週報" }) : BadRequest(new { result = res });
@@ -96,14 +100,14 @@ namespace Gp_Api.Controllers
         }
 
         [HttpPatch("{id}")]
-        public IActionResult Edit(int id, WeeklyReportPlmView data)
+        public IActionResult Edit(int id, CheckinLogsView data)
         {
             try
             {
                 var res = _service.EditData(id, data);
                 if (res == "OK")
                 {
-                    _hubContext.Clients.All.SendAsync("WeeklyReportPlm", "更新");
+                    _hubContext.Clients.All.SendAsync("CheckinLogs", "更新");
                     return Ok(new { result = "updated" });
                 }
                 return res == "NotFound" ? NotFound(new { result = "找不到該週報" }) : BadRequest(new { result = res });

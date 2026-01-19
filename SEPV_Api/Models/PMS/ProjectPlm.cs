@@ -9,6 +9,7 @@ namespace SEPV_Api.Models.PMS
     {
         public ProjectPlm()
         {
+            CheckinLogs = new HashSet<CheckinLogs>();
             WeeklyReportPlm = new HashSet<WeeklyReportPlm>();
         }
 
@@ -34,6 +35,7 @@ namespace SEPV_Api.Models.PMS
 
         public virtual CustomerPlm Customer { get; set; }
         public virtual LoginRoles Role { get; set; }
+        public virtual ICollection<CheckinLogs> CheckinLogs { get; set; }
         public virtual ICollection<WeeklyReportPlm> WeeklyReportPlm { get; set; }
     }
 }

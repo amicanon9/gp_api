@@ -15,6 +15,7 @@ namespace Gp_Api.Services
         void InsertData(WeeklyReportPlmView data);
         string DeleteData(int id);
         string EditData(int id, WeeklyReportPlmView data);
+        public List<WeeklyReportPlmView> GetAllData();
     }
 
     public class WeeklyReportPlmView
@@ -25,6 +26,8 @@ namespace Gp_Api.Services
         public int year { get; set; }
         public int week { get; set; }
         public string content { get; set; }
+        public string content_detail { get; set; }
+        public string ags_status { get; set; }
         public DateTime? created_at { get; set; }
     }
 
@@ -38,7 +41,28 @@ namespace Gp_Api.Services
         {
             _PMSContext = PMSContext;
         }
+        public List<WeeklyReportPlmView> GetAllData()
+        {
+            var check = _PMSContext.LoginInfoRoles.Where(a => a.RoleId == RoleId).Select(b => b.Role).FirstOrDefault();
+            var query = _PMSContext.WeeklyReportPlm
+                 .OrderByDescending(t => t.Year)
+                 .ThenByDescending(t => t.Week)
+                 .Select(t => new WeeklyReportPlmView
+                 {
+                     id = t.Id,
+                     project_id = t.ProjectId,
+                     year = t.Year,
+                     week = t.Week,
+                     content = t.Content,
+                     content_detail = t.ContentDetail,
+                     ags_status = t.AgsStatus,
+                     created_at = t.CreatedAt
+                 });
 
+          
+            var allData = query.ToList();
+            return allData;
+        }
         public List<WeeklyReportPlmView> GetDataById(int id)
         {
             // 1. 安全檢查：先確認該專案是否屬於該 Role (或是 Admin)
@@ -65,6 +89,8 @@ namespace Gp_Api.Services
                     year = t.Year,
                     week = t.Week,
                     content = t.Content,
+                    content_detail = t.ContentDetail,
+                    ags_status = t.AgsStatus,
                     created_at = t.CreatedAt
                 });
 
@@ -79,6 +105,8 @@ namespace Gp_Api.Services
                 Year = viewModel.year,
                 Week = viewModel.week,
                 Content = viewModel.content,
+                ContentDetail = viewModel.content_detail,
+                AgsStatus=viewModel.ags_status,
                 CreatedAt = DateTime.Now
             };
 
@@ -112,7 +140,8 @@ namespace Gp_Api.Services
             data.Week = viewModel.week;
             data.Content = viewModel.content;
             data.UpdatedAt = DateTime.Now;
-
+            data.ContentDetail = viewModel.content_detail;
+            data.AgsStatus = viewModel.ags_status;
             try
             {
                 _PMSContext.SaveChanges();
