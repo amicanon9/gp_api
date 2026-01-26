@@ -32,10 +32,10 @@ namespace Gp_Api.Controllers
                 // 從 Token 取得 User 資訊並賦值給 Service
                 var roleIdClaim = User.Claims.FirstOrDefault(t => t.Type == "role_id");
                 var userIdClaim = User.Claims.FirstOrDefault(t => t.Type == "user_id");
-
+                var bookIdClaim = User.Claims.FirstOrDefault(t => t.Type == "book_id");
                 if (roleIdClaim != null) _service.RoleId = Int16.Parse(roleIdClaim.Value);
                 if (userIdClaim != null) _service.UserId = Int16.Parse(userIdClaim.Value);
-
+                if (bookIdClaim != null) _service.BookId = Int16.Parse(bookIdClaim.Value);
                 return Ok(_service.GetAllData());
             }
             catch (Exception ex)
@@ -51,6 +51,8 @@ namespace Gp_Api.Controllers
             {
                 var roleIdClaim = User.Claims.FirstOrDefault(t => t.Type == "role_id");
                 if (roleIdClaim != null) _service.RoleId = Int16.Parse(roleIdClaim.Value);
+                var bookIdClaim = User.Claims.FirstOrDefault(t => t.Type == "book_id");
+                if (bookIdClaim != null) _service.BookId = Int16.Parse(bookIdClaim.Value);
                 _service.InsertData(data);
                 // 透過 SignalR 通知前端更新
                 _hubContext.Clients.All.SendAsync("ProjectPlm", "新增");

@@ -12,6 +12,7 @@ namespace Gp_Api.Services
     {
         public short RoleId { get; set; }
         public short UserId { get; set; }
+        public short BookId { get; set; }
         public List<ProjectPlmView> GetAllData();
         public void InsertData(ProjectPlmView data);
         public string DeleteData(int id);
@@ -22,6 +23,7 @@ namespace Gp_Api.Services
     {
         // Project 資訊
         public int id { get; set; }
+        public short book_id { get; set; }
         public int role_id { get; set; }
         public int? year { get; set; }
         public string quarter { get; set; }
@@ -48,6 +50,8 @@ namespace Gp_Api.Services
     {
         public short RoleId { get; set; }
         public short UserId { get; set; }
+        public short BookId { get; set; }
+
         private readonly PMSContext _PMSContext;
 
         public ProjectPlmService(PMSContext PMSContext)
@@ -61,7 +65,8 @@ namespace Gp_Api.Services
             var query = _PMSContext.ProjectPlm.Select(t => new ProjectPlmView
             {
                 id = t.Id,
-                role_id= t.RoleId,
+                book_id = t.BookId,
+                role_id = t.RoleId,
                 year = t.Year,
                 quarter = t.Quarter,
                 month = t.Month,
@@ -85,7 +90,7 @@ namespace Gp_Api.Services
 
             if (!check.IsAdmin)
             {
-                query = query.Where(a => a.role_id == RoleId);
+                query = query.Where(a => a.role_id == RoleId && a.book_id== BookId);
             }
             var allData = query.ToList();
             return allData;
@@ -96,6 +101,7 @@ namespace Gp_Api.Services
             var data = new ProjectPlm
             {
                 RoleId=RoleId,
+                BookId=BookId,
                 Year = viewModel.year,
                 Quarter = viewModel.quarter,
                 Month = viewModel.month,

@@ -34,7 +34,7 @@ namespace Gp_Api.Controllers
                 var role_id = _tokenService.GetRoleId((int)data.Id);
                 var role = _tokenService.GetLoginRoles(role_id);
                 return Ok(new { token = _jwtHelpers.GenerateToken(role_id, (int)data.Id,data.Username,
-                    data.Book_id,role.PermissionLevel, role.Book.Name) });
+                    role.BookId,role.PermissionLevel, role.Book.Name) });
             }
             else
             {
@@ -55,7 +55,7 @@ namespace Gp_Api.Controllers
             if (role_id == -1) return Unauthorized();
             var role = _tokenService.GetLoginRoles(role_id);
             return Ok(new { token = _jwtHelpers.GenerateToken( role_id,
-                (int)data.Id, data.Username, data.Book_id, role.PermissionLevel, role.Book.Name) });
+                (int)data.Id, data.Username, role.BookId, role.PermissionLevel, role.Book.Name) });
         }
     }
 

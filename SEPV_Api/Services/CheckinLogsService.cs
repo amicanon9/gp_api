@@ -11,8 +11,9 @@ namespace Gp_Api.Services
     {
         public short RoleId { get; set; }
         public short UserId { get; set; }
+        public short BookId { get; set; }
         List<CheckinLogsView> GetDataById(int id);
-        void InsertData(CheckinLogsView data);
+        void InsertData(List<CheckinLogsView> viewModelList);
         string DeleteData(int id);
         string EditData(int id, CheckinLogsView data);
         public List<CheckinLogsView> GetAllData();
@@ -22,19 +23,23 @@ namespace Gp_Api.Services
     {
         public int id { get; set; }
         // 新增時前端會傳一組 ID 陣列
+        public int book_id { get; set; }
         public List<int> project_ids { get; set; }
         public int project_id { get; set; }
         public string project_name { get; set; } // 補回這個欄位
         public int? user_id { get; set; }
         public DateTime checkin_time { get; set; }
+        public DateTime? fake_time { get; set; }
         public string mode { get; set; }
         public string status { get; set; }
         public DateTime? created_at { get; set; }
+        public int? work_percentage { get; set; }
     }
     public class CheckinLogsService : ICheckinLogsService
     {
         public short RoleId { get; set; }
         public short UserId { get; set; }
+        public short BookId { get; set; }
         private readonly PMSContext _PMSContext;
 
         public CheckinLogsService(PMSContext PMSContext)
@@ -62,76 +67,70 @@ namespace Gp_Api.Services
 
         public List<CheckinLogsView> GetDataById(int id)
         {
-            // 權限檢查邏輯統一
-            var role = _PMSContext.LoginInfoRoles.Where(a => a.RoleId == RoleId).Select(b => b.Role).FirstOrDefault();
-            var project = _PMSContext.ProjectPlm.FirstOrDefault(p => p.Id == id);
-
-            if (project == null) return new List<CheckinLogsView>();
-
-            if (role != null && !role.IsAdmin && project.RoleId != RoleId)
-            {
-                return new List<CheckinLogsView>();
-            }
+            DateTime oneMonthAgo = DateTime.Now.AddMonths(-1);
 
             var query = _PMSContext.CheckinLogs
-                .Where(t => t.UserId == id)
+                .Where(t => t.UserId == UserId && t.BookId==BookId && t.CheckinTime>= oneMonthAgo)
                 .OrderByDescending(t => t.CheckinTime)
                .Select(t => new CheckinLogsView
                {
                    id = t.Id,
                    project_id = t.ProjectId,
+                   book_id=t.BookId,
                    project_name = _PMSContext.ProjectPlm
                                 .Where(p => p.Id == t.ProjectId)
                                 .Select(p => p.Customer.Name)
                                 .FirstOrDefault(),
                    user_id = t.UserId,
                    checkin_time = t.CheckinTime,
+                   fake_time = t.FakeTime,
                    mode = t.Mode,
                    status = t.Status,
-                   created_at = t.CreatedAt
+                   created_at = t.CreatedAt,
+                   work_percentage = t.WorkPercentage
                });
 
             return query.ToList();
         }
 
-        public void InsertData(CheckinLogsView viewModel)
+        public void InsertData(List<CheckinLogsView> viewModelList)
         {
-            // 1. 取得當前要判斷的日期（不含時間）
-            // 取得今天的起始點 (00:00:00)
-            DateTime startOfToday = viewModel.checkin_time.Date;
-            // 取得明天的起始點 (00:00:00)
+            if (viewModelList == null || !viewModelList.Any()) return;
+
+            var firstItem = viewModelList.First();
+            DateTime startOfToday = firstItem.checkin_time.Date;
             DateTime startOfNextDay = startOfToday.AddDays(1);
 
-            string finalStatus = viewModel.status;
+            string finalStatus = firstItem.status;
 
-            if (viewModel.mode == "normal")
+            if (firstItem.mode == "normal")
             {
-                // 檢查當天是否有紀錄： >= 今天 00:00 AND < 明天 00:00
+                // 邏輯修改：只要今天有過任何紀錄，這一批就全部標記為下班
                 bool hasRecordToday = _PMSContext.CheckinLogs
-                    .Any(t => t.UserId == UserId &&
+                    .Any(t => t.UserId == UserId && t.BookId == BookId &&
                               t.CheckinTime >= startOfToday &&
                               t.CheckinTime < startOfNextDay);
 
                 finalStatus = hasRecordToday ? "下班" : "上班";
             }
 
-            // 3. 批次新增
-            if (viewModel.project_ids != null && viewModel.project_ids.Any())
+            foreach (var item in viewModelList)
             {
-                foreach (var pid in viewModel.project_ids)
+                var data = new CheckinLogs
                 {
-                    var data = new CheckinLogs
-                    {
-                        UserId = UserId,
-                        ProjectId = pid,
-                        CheckinTime = viewModel.checkin_time,
-                        Mode = viewModel.mode,
-                        Status = finalStatus, // 使用判斷後的狀態
-                        CreatedAt = DateTime.Now
-                    };
-                    _PMSContext.CheckinLogs.Add(data);
-                }
+                    UserId = UserId,
+                    BookId = BookId,
+                    ProjectId = item.project_id,
+                    CheckinTime = item.checkin_time,
+                    FakeTime = item.fake_time,
+                    Mode = item.mode,
+                    Status = finalStatus,
+                    CreatedAt = DateTime.Now,
+                    WorkPercentage = item.work_percentage,
+                };
+                _PMSContext.CheckinLogs.Add(data);
             }
+
             _PMSContext.SaveChanges();
         }
         public string DeleteData(int id)

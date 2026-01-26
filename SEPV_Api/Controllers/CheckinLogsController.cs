@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using Gp_Api.Hubs;
+﻿using Gp_Api.Hubs;
 using Gp_Api.IServices;
 using Gp_Api.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Gp_Api.Controllers
@@ -29,7 +30,8 @@ namespace Gp_Api.Controllers
             {
                 var roleIdClaim = User.Claims.FirstOrDefault(t => t.Type == "role_id");
                 var userIdClaim = User.Claims.FirstOrDefault(t => t.Type == "user_id");
-
+                var bookIdClaim = User.Claims.FirstOrDefault(t => t.Type == "book_id");
+                if (bookIdClaim != null) _service.BookId = Int16.Parse(bookIdClaim.Value);
                 if (roleIdClaim != null) _service.RoleId = Int16.Parse(roleIdClaim.Value);
                 if (userIdClaim != null) _service.UserId = Int16.Parse(userIdClaim.Value);
 
@@ -47,7 +49,8 @@ namespace Gp_Api.Controllers
             {
                 var roleIdClaim = User.Claims.FirstOrDefault(t => t.Type == "role_id");
                 var userIdClaim = User.Claims.FirstOrDefault(t => t.Type == "user_id");
-
+                var bookIdClaim = User.Claims.FirstOrDefault(t => t.Type == "book_id");
+                if (bookIdClaim != null) _service.BookId = Int16.Parse(bookIdClaim.Value);
                 if (roleIdClaim != null) _service.RoleId = Int16.Parse(roleIdClaim.Value);
                 if (userIdClaim != null) _service.UserId = Int16.Parse(userIdClaim.Value);
 
@@ -60,17 +63,23 @@ namespace Gp_Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(CheckinLogsView data)
+        public IActionResult Post(List<CheckinLogsView> dataList) // 改成接收 List
         {
             try
             {
+                if (dataList == null || !dataList.Any()) return BadRequest("無資料");
+
                 var roleIdClaim = User.Claims.FirstOrDefault(t => t.Type == "role_id");
                 var userIdClaim = User.Claims.FirstOrDefault(t => t.Type == "user_id");
+                var bookIdClaim = User.Claims.FirstOrDefault(t => t.Type == "book_id");
 
+                if (bookIdClaim != null) _service.BookId = Int16.Parse(bookIdClaim.Value);
                 if (roleIdClaim != null) _service.RoleId = Int16.Parse(roleIdClaim.Value);
                 if (userIdClaim != null) _service.UserId = Int16.Parse(userIdClaim.Value);
 
-                _service.InsertData(data);
+                // 呼叫修正後的 Insert 方法
+                _service.InsertData(dataList);
+
                 _hubContext.Clients.All.SendAsync("CheckinLogs", "新增");
                 return Ok(new { result = "inserted" });
             }

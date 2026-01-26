@@ -37,7 +37,11 @@ namespace SEPV_Api.Models.PMS
             {
                 entity.HasIndex(e => e.ProjectId, "IX_CheckinLogs_ProjectId");
 
+                entity.HasIndex(e => new { e.UserId, e.CheckinTime }, "IX_CheckinLogs_User_Time");
+
                 entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.BookId).HasColumnName("book_id");
 
                 entity.Property(e => e.CheckinTime)
                     .HasColumnType("datetime")
@@ -47,6 +51,10 @@ namespace SEPV_Api.Models.PMS
                     .HasColumnType("datetime")
                     .HasColumnName("created_at")
                     .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.FakeTime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fake_time");
 
                 entity.Property(e => e.Mode)
                     .HasMaxLength(20)
@@ -61,6 +69,14 @@ namespace SEPV_Api.Models.PMS
                     .HasColumnName("status");
 
                 entity.Property(e => e.UserId).HasColumnName("user_id");
+
+                entity.Property(e => e.WorkPercentage).HasColumnName("work_percentage");
+
+                entity.HasOne(d => d.Book)
+                    .WithMany(p => p.CheckinLogs)
+                    .HasForeignKey(d => d.BookId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CheckinLogs_set_of_books");
 
                 entity.HasOne(d => d.Project)
                     .WithMany(p => p.CheckinLogs)
@@ -366,6 +382,8 @@ namespace SEPV_Api.Models.PMS
                     .IsUnicode(false)
                     .HasColumnName("ags_status");
 
+                entity.Property(e => e.BookId).HasColumnName("book_id");
+
                 entity.Property(e => e.CloseDate)
                     .HasColumnType("date")
                     .HasColumnName("close_date");
@@ -422,6 +440,12 @@ namespace SEPV_Api.Models.PMS
                     .HasColumnName("updated_at");
 
                 entity.Property(e => e.Year).HasColumnName("year");
+
+                entity.HasOne(d => d.Book)
+                    .WithMany(p => p.ProjectPlm)
+                    .HasForeignKey(d => d.BookId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ProjectPLM_set_of_books");
 
                 entity.HasOne(d => d.Customer)
                     .WithMany(p => p.ProjectPlm)

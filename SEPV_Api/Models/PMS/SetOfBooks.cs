@@ -9,15 +9,19 @@ namespace SEPV_Api.Models.PMS
     {
         public SetOfBooks()
         {
+            CheckinLogs = new HashSet<CheckinLogs>();
             LoginInfo = new HashSet<LoginInfo>();
             LoginRoles = new HashSet<LoginRoles>();
+            ProjectPlm = new HashSet<ProjectPlm>();
         }
 
         public short BookId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
 
+        public virtual ICollection<CheckinLogs> CheckinLogs { get; set; }
         public virtual ICollection<LoginInfo> LoginInfo { get; set; }
         public virtual ICollection<LoginRoles> LoginRoles { get; set; }
+        public virtual ICollection<ProjectPlm> ProjectPlm { get; set; }
     }
 }

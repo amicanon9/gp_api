@@ -15,6 +15,7 @@ namespace SEPV_Api.Models.PMS
 
         public int Id { get; set; }
         public int RoleId { get; set; }
+        public short BookId { get; set; }
         public int? Year { get; set; }
         public string Quarter { get; set; }
         public int? Month { get; set; }
@@ -33,6 +34,7 @@ namespace SEPV_Api.Models.PMS
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
+        public virtual SetOfBooks Book { get; set; }
         public virtual CustomerPlm Customer { get; set; }
         public virtual LoginRoles Role { get; set; }
         public virtual ICollection<CheckinLogs> CheckinLogs { get; set; }
