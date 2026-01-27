@@ -50,6 +50,10 @@ namespace Gp_Api.Services
                     Username = t.Username,
                     Description = t.Description,
                     Disabled = t.Disabled,
+                    // --- 映射新欄位 ---
+                    Joined_date = t.JoinedDate,
+                    Dept_id = t.DeptId,
+                    // -----------------
                     Company_name = t.Book.Name,
                     Roles = t.LoginInfoRoles.Select(b => new LoginRolesViewModel
                     {
@@ -63,7 +67,7 @@ namespace Gp_Api.Services
                     }).ToList()
                 });
 
-            if (!check.IsAdmin)
+            if (check != null && !check.IsAdmin)
             {
                 BookId = check.BookId;
                 query = query.Where(a => a.Book_id == BookId);
@@ -82,6 +86,10 @@ namespace Gp_Api.Services
                     Username = t.Username,
                     Description = t.Description,
                     Disabled = t.Disabled,
+                    // --- 映射新欄位 ---
+                    Joined_date = t.JoinedDate,
+                    Dept_id = t.DeptId,
+                    // -----------------
                     Company_name = t.Book.Name,
                     Roles = t.LoginInfoRoles.Select(b => new LoginRolesViewModel
                     {
@@ -104,9 +112,12 @@ namespace Gp_Api.Services
             {
                 BookId = viewModel.Book_id,
                 Username = viewModel.Username,
-                Password = HashPassword(viewModel.Password), // 加密
+                Password = HashPassword(viewModel.Password),
                 Description = viewModel.Description,
-                Disabled = viewModel.Disabled
+                Disabled = viewModel.Disabled,
+                // --- 寫入新欄位 ---
+                JoinedDate = viewModel.Joined_date,
+                DeptId = viewModel.Dept_id
             };
 
             _PMSContext.LoginInfo.Add(data);
@@ -116,6 +127,51 @@ namespace Gp_Api.Services
             {
                 InsertRoles(data.Id, viewModel);
             }
+        }
+
+        public string EditData(int id, LoginInfoViewModel viewModel)
+        {
+            var data = _PMSContext.LoginInfo.FirstOrDefault(a => a.Id == id);
+            if (data == null) return "User Not Found";
+
+            data.Username = viewModel.Username;
+            data.Password = string.IsNullOrEmpty(viewModel.Password) ? data.Password : HashPassword(viewModel.Password);
+            data.Description = viewModel.Description;
+            data.Disabled = viewModel.Disabled;
+
+            // --- 更新新欄位 ---
+            data.JoinedDate = viewModel.Joined_date;
+            data.DeptId = viewModel.Dept_id;
+
+            var data_roles = _PMSContext.LoginInfoRoles.Where(t => t.InfoId == data.Id).ToList();
+            _PMSContext.LoginInfoRoles.RemoveRange(data_roles);
+
+            if (viewModel.Roles != null)
+            {
+                foreach (var Role in viewModel.Roles)
+                {
+                    if (!Role.Disabled)
+                    {
+                        var role_data = new LoginInfoRoles
+                        {
+                            InfoId = data.Id,
+                            RoleId = (int)Role.Id
+                        };
+                        _PMSContext.LoginInfoRoles.Add(role_data);
+                    }
+                }
+            }
+
+            try
+            {
+                _PMSContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                return ex.InnerException != null ? $"{ex.Message}\nInnerException:{ex.InnerException.Message}" : ex.Message;
+            }
+
+            return "OK";
         }
 
         private void InsertRoles(int infoid, LoginInfoViewModel viewModel)
@@ -152,46 +208,7 @@ namespace Gp_Api.Services
             return "OK";
         }
 
-        public string EditData(int id, LoginInfoViewModel viewModel)
-        {
-            var data = _PMSContext.LoginInfo.FirstOrDefault(a => a.Id == id);
-
-            data.Username = viewModel.Username;
-            data.Password = string.IsNullOrEmpty(viewModel.Password) ? data.Password : HashPassword(viewModel.Password);
-            data.Description = viewModel.Description;
-            data.Disabled = viewModel.Disabled;
-
-            var data_roles = _PMSContext.LoginInfoRoles.Where(t => t.InfoId == data.Id).ToList();
-            _PMSContext.LoginInfoRoles.RemoveRange(data_roles);
-
-            if (viewModel.Roles != null)
-            {
-                foreach (var Role in viewModel.Roles)
-                {
-                    if (!Role.Disabled)
-                    {
-                        var role_data = new LoginInfoRoles
-                        {
-                            InfoId = data.Id,
-                            RoleId = (int)Role.Id
-                        };
-                        _PMSContext.LoginInfoRoles.Add(role_data);
-                    }
-                }
-            }
-
-            try
-            {
-                _PMSContext.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                return ex.InnerException != null ? $"{ex}\nInnerException:{ex.InnerException}" : ex.ToString();
-            }
-
-            return "OK";
-        }
-
+     
         public bool ChangePassword(int id, ChangePasswordViewModel viewModel, bool isAdmin = false)
         {
             var data = _PMSContext.LoginInfo.FirstOrDefault(t => t.Id == id);

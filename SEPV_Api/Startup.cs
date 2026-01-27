@@ -59,6 +59,8 @@ namespace SEPV_Api
             services.AddTransient<IProjectPlmService, ProjectPlmService>();
             services.AddTransient<IWeeklyReportPlmService, WeeklyReportPlmService>();
             services.AddTransient<ICheckinLogsService, CheckinLogsService>();
+            services.AddTransient<IDepartmentsService, DepartmentsService>();
+            services.AddTransient<ILeaveApplicationsService, LeaveApplicationsService>();
             // services.AddScoped
 
             services.AddDbContext<PMSContext>(option => option.UseSqlServer(Configuration.GetConnectionString(nameof(PMSContext))));

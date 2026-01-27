@@ -22,6 +22,8 @@ namespace SEPV_Api.Models.PMS
         public virtual DbSet<CodeLookup> CodeLookup { get; set; }
         public virtual DbSet<CodeLookupSource> CodeLookupSource { get; set; }
         public virtual DbSet<CustomerPlm> CustomerPlm { get; set; }
+        public virtual DbSet<Departments> Departments { get; set; }
+        public virtual DbSet<LeaveApplications> LeaveApplications { get; set; }
         public virtual DbSet<LoginInfo> LoginInfo { get; set; }
         public virtual DbSet<LoginInfoRoles> LoginInfoRoles { get; set; }
         public virtual DbSet<LoginMenus> LoginMenus { get; set; }
@@ -216,6 +218,93 @@ namespace SEPV_Api.Models.PMS
                     .HasColumnName("telephone5");
             });
 
+            modelBuilder.Entity<Departments>(entity =>
+            {
+                entity.ToTable("departments");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.DeptName)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("dept_name");
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(100)
+                    .HasColumnName("description");
+
+                entity.Property(e => e.ManagerId).HasColumnName("manager_id");
+
+                entity.HasOne(d => d.Manager)
+                    .WithMany(p => p.Departments)
+                    .HasForeignKey(d => d.ManagerId)
+                    .HasConstraintName("FK_departments_login_info");
+            });
+
+            modelBuilder.Entity<LeaveApplications>(entity =>
+            {
+                entity.ToTable("Leave_applications");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_at")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.DeptId).HasColumnName("dept_id");
+
+                entity.Property(e => e.EndTime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("end_time");
+
+                entity.Property(e => e.LeaveType)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("leave_type");
+
+                entity.Property(e => e.ManagerRemark)
+                    .HasMaxLength(500)
+                    .HasColumnName("manager_remark");
+
+                entity.Property(e => e.Reason)
+                    .HasMaxLength(500)
+                    .HasColumnName("reason");
+
+                entity.Property(e => e.StartTime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("start_time");
+
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("status")
+                    .HasDefaultValueSql("('特休')");
+
+                entity.Property(e => e.TotalHours)
+                    .HasColumnType("decimal(5, 1)")
+                    .HasColumnName("total_hours");
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updated_at");
+
+                entity.Property(e => e.UserId).HasColumnName("user_id");
+
+                entity.HasOne(d => d.Dept)
+                    .WithMany(p => p.LeaveApplications)
+                    .HasForeignKey(d => d.DeptId)
+                    .HasConstraintName("FK_Leave_applications_departments");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.LeaveApplications)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Leave_applications_login_info");
+            });
+
             modelBuilder.Entity<LoginInfo>(entity =>
             {
                 entity.ToTable("login_info");
@@ -227,12 +316,18 @@ namespace SEPV_Api.Models.PMS
 
                 entity.Property(e => e.BookId).HasColumnName("book_id");
 
+                entity.Property(e => e.DeptId).HasColumnName("dept_id");
+
                 entity.Property(e => e.Description)
                     .HasMaxLength(100)
                     .IsUnicode(false)
                     .HasColumnName("description");
 
                 entity.Property(e => e.Disabled).HasColumnName("disabled");
+
+                entity.Property(e => e.JoinedDate)
+                    .HasColumnType("date")
+                    .HasColumnName("joined_date");
 
                 entity.Property(e => e.Password)
                     .IsRequired()

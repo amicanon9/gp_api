@@ -9,6 +9,8 @@ namespace SEPV_Api.Models.PMS
     {
         public LoginInfo()
         {
+            Departments = new HashSet<Departments>();
+            LeaveApplications = new HashSet<LeaveApplications>();
             LoginInfoRoles = new HashSet<LoginInfoRoles>();
         }
 
@@ -18,8 +20,12 @@ namespace SEPV_Api.Models.PMS
         public string Password { get; set; }
         public string Description { get; set; }
         public bool Disabled { get; set; }
+        public DateTime? JoinedDate { get; set; }
+        public int? DeptId { get; set; }
 
         public virtual SetOfBooks Book { get; set; }
+        public virtual ICollection<Departments> Departments { get; set; }
+        public virtual ICollection<LeaveApplications> LeaveApplications { get; set; }
         public virtual ICollection<LoginInfoRoles> LoginInfoRoles { get; set; }
     }
 }

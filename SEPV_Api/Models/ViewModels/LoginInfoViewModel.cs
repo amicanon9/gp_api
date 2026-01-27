@@ -27,11 +27,14 @@ namespace Gp_Api.Models.ViewModels
         public string Password { get; set; }
         [Required]
         public string Description { get; set; }
-        
         public bool Disabled { get; set; }
 
-        public string Company_name { get; set; }
+        // --- 新增欄位 ---
+        public DateTime? Joined_date { get; set; } // 到職日
+        public int? Dept_id { get; set; }           // 部門 ID
+                                                    // ----------------
 
+        public string Company_name { get; set; }
         public List<LoginRolesViewModel> Roles { get; set; }
     }
 }

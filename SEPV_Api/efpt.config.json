@@ -31,6 +31,14 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[departments]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Leave_applications]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[login_info]",
          "ObjectType": 0
       },
