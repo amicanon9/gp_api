@@ -10,6 +10,7 @@ namespace Gp_Api.Services
     public interface ILeaveApplicationsService
     {
         public short UserId { get; set; }
+        public short RoleId { get; set; }
         List<LeaveApplicationsView> GetDataById(int userId);
         string InsertData(LeaveApplicationsView viewModel);
         string UpdateStatus(int id, string status, string remark);
@@ -38,7 +39,7 @@ namespace Gp_Api.Services
     {
         private readonly PMSContext _PMSContext;
         public short UserId { get; set; }
-
+        public short RoleId { get; set; }
         public LeaveApplicationsService(PMSContext PMSContext)
         {
             _PMSContext = PMSContext;
@@ -125,23 +126,46 @@ namespace Gp_Api.Services
         // 4. 取得所有資料 (主管管理介面用)
         public List<LeaveApplicationsView> GetAllData()
         {
-            return _PMSContext.LeaveApplications
+            // 1. 先確認該角色的權限
+            var currentRole = _PMSContext.LoginInfoRoles
+                .Where(a => a.RoleId == RoleId)
+                .Select(b => b.Role)
+                .FirstOrDefault();
+
+            // 2. 建立基礎 Query (先把 Include 和 Select 寫好)
+            var query = _PMSContext.LeaveApplications
                 .Include(l => l.User)
                 .Include(l => l.Dept)
+                .ThenInclude(d => d.Manager) // 確保能抓到主管名稱
+                .AsQueryable();
+
+            // 3. 權限判斷：若非 Admin，則增加 ManagerId 的過濾條件
+            // 假設 check.IsAdmin 是判斷是否為管理員的欄位
+            if (currentRole == null || !currentRole.IsAdmin)
+            {
+                query = query.Where(e => e.Dept.ManagerId == UserId);
+            }
+
+            // 4. 最後執行排序與投影轉型
+            return query
                 .OrderByDescending(l => l.CreatedAt)
                 .Select(l => new LeaveApplicationsView
                 {
                     id = l.Id,
+                    user_id = l.UserId,
                     username = l.User.Username,
-                    dept_name = l.Dept.DeptName,
-                    dept_id = l.DeptId, // 自動帶入部門 ID
                     leave_type = l.LeaveType,
                     start_time = l.StartTime,
                     end_time = l.EndTime,
                     total_hours = l.TotalHours,
+                    reason = l.Reason,
                     status = l.Status,
-                    created_at = l.CreatedAt
-                }).ToList();
+                    manager_remark = l.ManagerRemark,
+                    created_at = l.CreatedAt,
+                    dept_name = l.Dept.DeptName,
+                    manager_name = l.Dept.Manager != null ? l.Dept.Manager.Username : "無主管"
+                })
+                .ToList();
         }
     }
 }

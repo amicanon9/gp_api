@@ -36,8 +36,7 @@ namespace Gp_Api.Controllers
         {
             try
             {
-                // 如果是管理員或主管，可能想看全部，這裡呼叫 GetAllData
-                // 如果是一般員工，通常前端會改呼叫 GetById
+                SetServiceUserContext();
                 return Ok(_service.GetAllData());
             }
             catch (Exception ex)
@@ -51,7 +50,7 @@ namespace Gp_Api.Controllers
         {
             try
             {
-                // 這裡 id 通常傳入 user_id
+                SetServiceUserContext();
                 return Ok(_service.GetDataById(id));
             }
             catch (Exception ex)
@@ -90,7 +89,7 @@ namespace Gp_Api.Controllers
         {
             try
             {
-                // 接收 status 與 manager_remark
+                SetServiceUserContext();
                 string status = updateData.status;
                 string remark = updateData.manager_remark;
 

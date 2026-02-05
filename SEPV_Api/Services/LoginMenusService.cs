@@ -22,15 +22,19 @@ namespace Gp_Api.Services
         {
             var role = _PMSContext.LoginInfoRoles.Where(t => t.RoleId == role_id);
             var role_result = new LoginRoles();
-            if (user_id  == -1) role_result =  role.Select(a => a.Role).Where(c => c.Disabled == false).FirstOrDefault();
-            else role_result =  role.Where(t => t.InfoId == user_id).Select(a => a.Role).Where(c => c.Disabled == false).FirstOrDefault();
-         
-            // get role's node menus, and select node menus from books_menus.
+
+            if (user_id == -1)
+                role_result = role.Select(a => a.Role).Where(c => c.Disabled == false).FirstOrDefault();
+            else
+                role_result = role.Where(t => t.InfoId == user_id).Select(a => a.Role).Where(c => c.Disabled == false).FirstOrDefault();
+
+            if (role_result == null) return null;
+
+            // 1. 取得原始權限下的選單
             var menus = new List<LoginMenus>();
             if (role_result.IsAdmin)
             {
-                menus = _PMSContext.LoginMenus.Where(t => t.IsNode == true)
-                    .OrderBy(b => b.SeqNo).ToList();
+                menus = _PMSContext.LoginMenus.Where(t => t.IsNode == true).OrderBy(b => b.SeqNo).ToList();
             }
             else
             {
@@ -38,7 +42,24 @@ namespace Gp_Api.Services
                     .Where(t => t.RoleId == role_result.Id).Select(a => a.Menu)
                     .Where(c => c.IsNode == true).OrderBy(b => b.SeqNo).ToList();
             }
-            if (menus == null)
+
+            // --- 強制加入通用工具邏輯 ---
+            // 從資料庫抓取「打卡工具」與「請假單」的原始物件 (假設 Url 分別為 /checkin 和 /leave)
+            // 這樣可以確保它們的 Parent 關係與 Icon 能正確被 GetChild 處理
+            var commonTools = _PMSContext.LoginMenus
+                .Where(m => m.Url == "/checkin" || m.Url == "/leaveapplications")
+                .ToList();
+
+            foreach (var tool in commonTools)
+            {
+                if (!menus.Any(m => m.Id == tool.Id))
+                {
+                    menus.Add(tool);
+                }
+            }
+            // -------------------------
+
+            if (menus == null || menus.Count == 0)
             {
                 return new LoginMenusFormViewModel
                 {
@@ -47,46 +68,45 @@ namespace Gp_Api.Services
                     Menus = new List<LoginMenusViewModel>()
                 };
             }
-            else
+
+            // 2. 開始組合階層選單
+            var temp_menus = new List<LoginMenusViewModel>();
+            var memory_parent = new List<int>();
+
+            foreach (var menu in menus)
             {
-              
-                var temp_menus = new List<LoginMenusViewModel>();
-                var memory_parent = new List<int>();
-                foreach (var menu in menus)
+                if (menu.Parent == null)
                 {
-                    if (menu.Parent == null)
+                    var temp_data = new LoginMenusViewModel
                     {
-                        var temp_data =
-                        new LoginMenusViewModel
-                        {
-                            Id = menu.Id,
-                            Name = menu.MenuName,
-                            Description = menu.Description,
-                            Url = menu.Url,
-                            Children = new List<object>(),
-                            Icon = menu.Icon,
-                            Seq_no = menu.SeqNo,
-                        };
-                        temp_menus.Add(temp_data);
-                    }
-                    else if (menu.Parent != null)
+                        Id = menu.Id,
+                        Name = menu.MenuName,
+                        Description = menu.Description,
+                        Url = menu.Url,
+                        Children = new List<object>(),
+                        Icon = menu.Icon,
+                        Seq_no = menu.SeqNo,
+                    };
+                    temp_menus.Add(temp_data);
+                }
+                else
+                {
+                    // 如果該節點有父層，且父層尚未被處理過
+                    if (!memory_parent.Contains((int)menu.Parent))
                     {
-                        var parent = menus.Where(t => t.Id == menu.Parent).FirstOrDefault();
-                        if (parent != null || memory_parent.Contains((int)menu.Parent)) continue;
                         memory_parent.Add((int)menu.Parent);
                         temp_menus.Add(GetChild((int)menu.Parent, menus));
-                        
                     }
                 }
-
-                temp_menus = temp_menus.OrderBy(t => t.Seq_no).ToList();
-                return new LoginMenusFormViewModel
-                {
-                    Id = role_result.Id,
-                    Name = role_result.RoleName,
-                    Menus = temp_menus
-                };
             }
+
+            // 最後根據 SeqNo 排序並回傳
+            return new LoginMenusFormViewModel
+            {
+                Id = role_result.Id,
+                Name = role_result.RoleName,
+                Menus = temp_menus.OrderBy(t => t.Seq_no).ToList()
+            };
         }
         private LoginMenusViewModel GetChild(int parent_id, List<LoginMenus> menus, string prev_url = "")
         {

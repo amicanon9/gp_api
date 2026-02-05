@@ -30,6 +30,11 @@ namespace SEPV_Api.Models.PMS
         public string IndustryCrm { get; set; }
         public string ExistingPlm { get; set; }
         public string ExistingCad { get; set; }
+        public string Email { get; set; }
+        public string Email2 { get; set; }
+        public string Email3 { get; set; }
+        public string Email4 { get; set; }
+        public string Email5 { get; set; }
 
         public virtual ICollection<ProjectPlm> ProjectPlm { get; set; }
     }

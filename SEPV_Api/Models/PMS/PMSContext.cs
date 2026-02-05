@@ -29,8 +29,12 @@ namespace SEPV_Api.Models.PMS
         public virtual DbSet<LoginMenus> LoginMenus { get; set; }
         public virtual DbSet<LoginRoles> LoginRoles { get; set; }
         public virtual DbSet<LoginRolesMenus> LoginRolesMenus { get; set; }
+        public virtual DbSet<ProjectInternal> ProjectInternal { get; set; }
         public virtual DbSet<ProjectPlm> ProjectPlm { get; set; }
+        public virtual DbSet<ProjectSvc> ProjectSvc { get; set; }
+        public virtual DbSet<ProjectSvcTeam> ProjectSvcTeam { get; set; }
         public virtual DbSet<SetOfBooks> SetOfBooks { get; set; }
+        public virtual DbSet<TaskMaster> TaskMaster { get; set; }
         public virtual DbSet<WeeklyReportPlm> WeeklyReportPlm { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -70,6 +74,11 @@ namespace SEPV_Api.Models.PMS
                     .IsUnicode(false)
                     .HasColumnName("status");
 
+                entity.Property(e => e.Type)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .HasColumnName("type");
+
                 entity.Property(e => e.UserId).HasColumnName("user_id");
 
                 entity.Property(e => e.WorkPercentage).HasColumnName("work_percentage");
@@ -79,12 +88,6 @@ namespace SEPV_Api.Models.PMS
                     .HasForeignKey(d => d.BookId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CheckinLogs_set_of_books");
-
-                entity.HasOne(d => d.Project)
-                    .WithMany(p => p.CheckinLogs)
-                    .HasForeignKey(d => d.ProjectId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_CheckinLogs_ProjectPLM");
             });
 
             modelBuilder.Entity<CodeLookup>(entity =>
@@ -170,6 +173,31 @@ namespace SEPV_Api.Models.PMS
                     .HasMaxLength(500)
                     .IsUnicode(false)
                     .HasColumnName("description");
+
+                entity.Property(e => e.Email)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("email");
+
+                entity.Property(e => e.Email2)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("email2");
+
+                entity.Property(e => e.Email3)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("email3");
+
+                entity.Property(e => e.Email4)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("email4");
+
+                entity.Property(e => e.Email5)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("email5");
 
                 entity.Property(e => e.ExistingCad)
                     .HasMaxLength(50)
@@ -466,6 +494,37 @@ namespace SEPV_Api.Models.PMS
                     .HasConstraintName("FK_login_roles_menus_login_roles");
             });
 
+            modelBuilder.Entity<ProjectInternal>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.BookId).HasColumnName("book_id");
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_at")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(500)
+                    .HasColumnName("description");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasColumnName("name");
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updated_at");
+
+                entity.HasOne(d => d.Book)
+                    .WithMany(p => p.ProjectInternal)
+                    .HasForeignKey(d => d.BookId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ProjectInternal_set_of_books");
+            });
+
             modelBuilder.Entity<ProjectPlm>(entity =>
             {
                 entity.ToTable("ProjectPLM");
@@ -554,6 +613,113 @@ namespace SEPV_Api.Models.PMS
                     .HasConstraintName("FK_ProjectPLM_login_roles");
             });
 
+            modelBuilder.Entity<ProjectSvc>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AccessDate)
+                    .HasColumnType("date")
+                    .HasColumnName("access_date");
+
+                entity.Property(e => e.ActualDays)
+                    .HasColumnType("decimal(10, 2)")
+                    .HasColumnName("actual_days");
+
+                entity.Property(e => e.BookId).HasColumnName("book_id");
+
+                entity.Property(e => e.ContractAmount)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("contract_amount");
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_at")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.DefineDate)
+                    .HasColumnType("date")
+                    .HasColumnName("define_date");
+
+                entity.Property(e => e.DesignDate)
+                    .HasColumnType("date")
+                    .HasColumnName("design_date");
+
+                entity.Property(e => e.GoLiveDate)
+                    .HasColumnType("date")
+                    .HasColumnName("go_live_date");
+
+                entity.Property(e => e.KickoffDate)
+                    .HasColumnType("date")
+                    .HasColumnName("kickoff_date");
+
+                entity.Property(e => e.MarginPercentage)
+                    .HasColumnType("decimal(5, 2)")
+                    .HasColumnName("margin_percentage");
+
+                entity.Property(e => e.PlannedDays)
+                    .HasColumnType("decimal(10, 2)")
+                    .HasColumnName("planned_days");
+
+                entity.Property(e => e.ProjectManagerId).HasColumnName("project_manager_id");
+
+                entity.Property(e => e.ProjectName)
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasColumnName("project_name");
+
+                entity.Property(e => e.RolloutDate)
+                    .HasColumnType("date")
+                    .HasColumnName("rollout_date");
+
+                entity.Property(e => e.SowSignedDate)
+                    .HasColumnType("date")
+                    .HasColumnName("sow_signed_date");
+
+                entity.Property(e => e.UatDate)
+                    .HasColumnType("date")
+                    .HasColumnName("uat_date");
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updated_at");
+
+                entity.HasOne(d => d.Book)
+                    .WithMany(p => p.ProjectSvc)
+                    .HasForeignKey(d => d.BookId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ProjectSvc_set_of_books");
+
+                entity.HasOne(d => d.ProjectManager)
+                    .WithMany(p => p.ProjectSvc)
+                    .HasForeignKey(d => d.ProjectManagerId)
+                    .HasConstraintName("FK_ProjectSvc_PM");
+            });
+
+            modelBuilder.Entity<ProjectSvcTeam>(entity =>
+            {
+                entity.HasKey(e => new { e.ProjectSvcId, e.UserId });
+
+                entity.Property(e => e.ProjectSvcId).HasColumnName("project_svc_id");
+
+                entity.Property(e => e.UserId).HasColumnName("user_id");
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_at")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(d => d.ProjectSvc)
+                    .WithMany(p => p.ProjectSvcTeam)
+                    .HasForeignKey(d => d.ProjectSvcId)
+                    .HasConstraintName("FK_ProjectSvcTeam_ProjectSvc");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.ProjectSvcTeam)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ProjectSvcTeam_login_info");
+            });
+
             modelBuilder.Entity<SetOfBooks>(entity =>
             {
                 entity.HasKey(e => e.BookId);
@@ -574,6 +740,54 @@ namespace SEPV_Api.Models.PMS
                     .HasMaxLength(100)
                     .IsUnicode(false)
                     .HasColumnName("name");
+            });
+
+            modelBuilder.Entity<TaskMaster>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.BookId).HasColumnName("book_id");
+
+                entity.Property(e => e.Category)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .HasColumnName("category");
+
+                entity.Property(e => e.CloseDate)
+                    .HasColumnType("date")
+                    .HasColumnName("close_date");
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_at")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Description).HasColumnName("description");
+
+                entity.Property(e => e.Priority)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .HasColumnName("priority");
+
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .HasColumnName("status");
+
+                entity.Property(e => e.TaskName)
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasColumnName("task_name");
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updated_at");
+
+                entity.HasOne(d => d.Book)
+                    .WithMany(p => p.TaskMaster)
+                    .HasForeignKey(d => d.BookId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_TaskMaster_set_of_books");
             });
 
             modelBuilder.Entity<WeeklyReportPlm>(entity =>

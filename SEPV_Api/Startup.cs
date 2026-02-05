@@ -1,22 +1,22 @@
+using Gp_Api.Helpers;
+using Gp_Api.Hubs;
+using Gp_Api.IServices;
+using Gp_Api.Services;
+using Gp_Api.Tools.Converters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using PMS_api.Services;
 using SEPV_Api.Models.PMS;
-
-using Gp_Api.Helpers;
-using Gp_Api.IServices;
-using Gp_Api.Services;
-using System.Text;
-using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
-using Microsoft.AspNetCore.Authorization;
 using System;
-using Gp_Api.Tools.Converters;
-using Gp_Api.Hubs;
+using System.Text;
 
 namespace SEPV_Api
 {
@@ -61,6 +61,10 @@ namespace SEPV_Api
             services.AddTransient<ICheckinLogsService, CheckinLogsService>();
             services.AddTransient<IDepartmentsService, DepartmentsService>();
             services.AddTransient<ILeaveApplicationsService, LeaveApplicationsService>();
+            services.AddTransient<IProjectInternalService, ProjectInternalService>();
+            services.AddTransient<IProjectSvcService, ProjectSvcService>();
+            services.AddTransient<ITaskMasterService, TaskMasterService>();
+            services.AddTransient<IFileProcessorService, FileProcessorService>();
             // services.AddScoped
 
             services.AddDbContext<PMSContext>(option => option.UseSqlServer(Configuration.GetConnectionString(nameof(PMSContext))));

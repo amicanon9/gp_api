@@ -12,7 +12,10 @@ namespace SEPV_Api.Models.PMS
             CheckinLogs = new HashSet<CheckinLogs>();
             LoginInfo = new HashSet<LoginInfo>();
             LoginRoles = new HashSet<LoginRoles>();
+            ProjectInternal = new HashSet<ProjectInternal>();
             ProjectPlm = new HashSet<ProjectPlm>();
+            ProjectSvc = new HashSet<ProjectSvc>();
+            TaskMaster = new HashSet<TaskMaster>();
         }
 
         public short BookId { get; set; }
@@ -22,6 +25,9 @@ namespace SEPV_Api.Models.PMS
         public virtual ICollection<CheckinLogs> CheckinLogs { get; set; }
         public virtual ICollection<LoginInfo> LoginInfo { get; set; }
         public virtual ICollection<LoginRoles> LoginRoles { get; set; }
+        public virtual ICollection<ProjectInternal> ProjectInternal { get; set; }
         public virtual ICollection<ProjectPlm> ProjectPlm { get; set; }
+        public virtual ICollection<ProjectSvc> ProjectSvc { get; set; }
+        public virtual ICollection<TaskMaster> TaskMaster { get; set; }
     }
 }

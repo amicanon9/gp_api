@@ -59,11 +59,27 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[ProjectInternal]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[ProjectPLM]",
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[ProjectSvc]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ProjectSvcTeam]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[set_of_books]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[TaskMaster]",
          "ObjectType": 0
       },
       {

@@ -11,6 +11,7 @@ namespace Gp_Api.Services
     {
         public short RoleId { get; set; }
         public short UserId { get; set; }
+        public short BookId { get; set; }
         List<DepartmentsView> GetAllData();
         DepartmentsView GetDataById(int id);
         void InsertData(DepartmentsView data);
@@ -20,7 +21,7 @@ namespace Gp_Api.Services
 
     public class DepartmentsView
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string Dept_name { get; set; }
         public string Description { get; set; }
         public int? Manager_id { get; set; }      // 部門主管 ID
@@ -31,6 +32,7 @@ namespace Gp_Api.Services
     {
         public short RoleId { get; set; }
         public short UserId { get; set; }
+        public short BookId { get; set; }
         private readonly PMSContext _PMSContext;
 
         public DepartmentsService(PMSContext PMSContext)

@@ -14,6 +14,7 @@ namespace Gp_Api.Services
         public short UserId { get; set; }
         public short BookId { get; set; }
         public List<ProjectPlmView> GetAllData();
+        public List<ProjectPlmView> GetAllDataByAllRoles();
         public void InsertData(ProjectPlmView data);
         public string DeleteData(int id);
         public string EditData(int id, ProjectPlmView data);
@@ -95,7 +96,49 @@ namespace Gp_Api.Services
             var allData = query.ToList();
             return allData;
         }
+        public List<ProjectPlmView> GetAllDataByAllRoles()
+        {
+            // 1. 取得該使用者目前選定的角色資訊（判斷是否為 Admin）
+            var check = _PMSContext.LoginInfoRoles.Where(a => a.RoleId == RoleId).Select(b => b.Role).FirstOrDefault();
 
+            // 2. 取得該 User 擁有的所有 RoleId 清單
+            // 這樣可以拿到 user_id 底下所有符合的角色專案
+            var userRoleIds = _PMSContext.LoginInfoRoles
+                .Where(a => a.InfoId == UserId) // 假設你的 LoginInfoId 就是 UserId
+                .Select(a => a.RoleId)
+                .ToList();
+
+            // 3. 建立基礎查詢
+            var query = _PMSContext.ProjectPlm.AsQueryable();
+            if (!check.IsAdmin)
+            {
+                query = query.Where(a => userRoleIds.Contains(a.RoleId));
+            }
+            return query.Select(t => new ProjectPlmView
+            {
+                id = t.Id,
+                book_id = t.BookId,
+                role_id = t.RoleId,
+                year = t.Year,
+                quarter = t.Quarter,
+                month = t.Month,
+                close_date = t.CloseDate,
+                rfq_to_client_amount = t.RfqToClientAmount,
+                net_to_ds_amount = t.NetToDsAmount,
+                system_inquiry_channel = t.SystemInquiryChannel,
+                is_system_checked = t.IsSystemChecked,
+                is_ags_booking = t.IsAgsBooking,
+                customer_id = t.CustomerId,
+                ags_status = t.AgsStatus,
+                under_control_longshot_year_q = t.UnderControlLongshotYearQ,
+                solution_mapping = t.SolutionMapping,
+                sales_owner = t.SalesOwner,
+                service_owner = t.ServiceOwner,
+                // 帶入客戶資訊
+                customer_name = t.Customer != null ? t.Customer.Name : ""
+            })
+            .ToList();
+        }
         public void InsertData(ProjectPlmView viewModel)
         {
             var data = new ProjectPlm

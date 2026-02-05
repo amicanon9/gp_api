@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 using SEPV_Api.Models.PMS;
 using Gp_Api.Hubs;
 using Gp_Api.IServices;
-using Gp_Api.Services; // 確保引用了包含 ProjectPlmView 的命名空間
+using Gp_Api.Services; // 確保引用了包含 ProjectSvcView 的命名空間
 using System;
 using System.Linq;
 
@@ -13,12 +13,12 @@ namespace Gp_Api.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class ProjectPlmController : ControllerBase
+    public class ProjectSvcController : ControllerBase
     {
-        private readonly IProjectPlmService _service;
+        private readonly IProjectSvcService _service;
         private readonly IHubContext<ChatHub> _hubContext;
 
-        public ProjectPlmController(IProjectPlmService service, IHubContext<ChatHub> hubContext)
+        public ProjectSvcController(IProjectSvcService service, IHubContext<ChatHub> hubContext)
         {
             _service = service;
             _hubContext = hubContext;
@@ -33,7 +33,6 @@ namespace Gp_Api.Controllers
                 var roleIdClaim = User.Claims.FirstOrDefault(t => t.Type == "role_id");
                 var userIdClaim = User.Claims.FirstOrDefault(t => t.Type == "user_id");
                 var bookIdClaim = User.Claims.FirstOrDefault(t => t.Type == "book_id");
-                if (roleIdClaim != null) _service.RoleId = Int16.Parse(roleIdClaim.Value);
                 if (userIdClaim != null) _service.UserId = Int16.Parse(userIdClaim.Value);
                 if (bookIdClaim != null) _service.BookId = Int16.Parse(bookIdClaim.Value);
                 return Ok(_service.GetAllData());
@@ -43,37 +42,18 @@ namespace Gp_Api.Controllers
                 return BadRequest(new { message = "讀取資料失敗", error = ex.Message });
             }
         }
-        [HttpGet("ByRole")] // 這會讓路徑變成 api/ProjectPlm/ByRole
-        public IActionResult GetAllByRole()
-        {
-            try
-            {
-                // 從 Token 取得 User 資訊並賦值給 Service
-                var roleIdClaim = User.Claims.FirstOrDefault(t => t.Type == "role_id");
-                var userIdClaim = User.Claims.FirstOrDefault(t => t.Type == "user_id");
-                var bookIdClaim = User.Claims.FirstOrDefault(t => t.Type == "book_id");
-                if (roleIdClaim != null) _service.RoleId = Int16.Parse(roleIdClaim.Value);
-                if (userIdClaim != null) _service.UserId = Int16.Parse(userIdClaim.Value);
-                if (bookIdClaim != null) _service.BookId = Int16.Parse(bookIdClaim.Value);
-                return Ok(_service.GetAllDataByAllRoles());
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = "讀取多角色資料失敗", error = ex.Message });
-            }
-        }
+   
         [HttpPost]
-        public IActionResult Post(ProjectPlmView data)
+        public IActionResult Post(ProjectSvcView data)
         {
             try
             {
                 var roleIdClaim = User.Claims.FirstOrDefault(t => t.Type == "role_id");
-                if (roleIdClaim != null) _service.RoleId = Int16.Parse(roleIdClaim.Value);
                 var bookIdClaim = User.Claims.FirstOrDefault(t => t.Type == "book_id");
                 if (bookIdClaim != null) _service.BookId = Int16.Parse(bookIdClaim.Value);
                 _service.InsertData(data);
                 // 透過 SignalR 通知前端更新
-                _hubContext.Clients.All.SendAsync("ProjectPlm", "新增");
+                _hubContext.Clients.All.SendAsync("ProjectSvc", "新增");
                 return Ok(new { result = "inserted" });
             }
             catch (Exception ex)
@@ -90,7 +70,7 @@ namespace Gp_Api.Controllers
                 var res = _service.DeleteData(id);
                 if (res == "OK")
                 {
-                    _hubContext.Clients.All.SendAsync("ProjectPlm", "刪除");
+                    _hubContext.Clients.All.SendAsync("ProjectSvc", "刪除");
                     return Ok(new { result = "deleted" });
                 }
                 else if (res == "NotFound")
@@ -106,14 +86,14 @@ namespace Gp_Api.Controllers
         }
 
         [HttpPatch("{id}")]
-        public IActionResult Edit(int id, ProjectPlmView data)
+        public IActionResult Edit(int id, ProjectSvcView data)
         {
             try
             {
                 var res = _service.EditData(id, data);
                 if (res == "OK")
                 {
-                    _hubContext.Clients.All.SendAsync("ProjectPlm", "更新");
+                    _hubContext.Clients.All.SendAsync("ProjectSvc", "更新");
                     return Ok(new { result = "updated" });
                 }
                 else if (res == "NotFound")

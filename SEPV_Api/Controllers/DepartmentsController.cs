@@ -30,10 +30,10 @@ namespace Gp_Api.Controllers
                 // 從 Token 取得 User 資訊並賦值給 Service
                 var roleIdClaim = User.Claims.FirstOrDefault(t => t.Type == "role_id");
                 var userIdClaim = User.Claims.FirstOrDefault(t => t.Type == "user_id");
-
+                var bookIdClaim = User.Claims.FirstOrDefault(t => t.Type == "book_id");
+                if (bookIdClaim != null) _service.BookId = Int16.Parse(bookIdClaim.Value);
                 if (roleIdClaim != null) _service.RoleId = Int16.Parse(roleIdClaim.Value);
                 if (userIdClaim != null) _service.UserId = Int16.Parse(userIdClaim.Value);
-
                 return Ok(_service.GetAllData());
             }
             catch (Exception ex)
@@ -47,7 +47,11 @@ namespace Gp_Api.Controllers
             try
             {
                 var roleIdClaim = User.Claims.FirstOrDefault(t => t.Type == "role_id");
+                var userIdClaim = User.Claims.FirstOrDefault(t => t.Type == "user_id");
+                var bookIdClaim = User.Claims.FirstOrDefault(t => t.Type == "book_id");
+                if (bookIdClaim != null) _service.BookId = Int16.Parse(bookIdClaim.Value);
                 if (roleIdClaim != null) _service.RoleId = Int16.Parse(roleIdClaim.Value);
+                if (userIdClaim != null) _service.UserId = Int16.Parse(userIdClaim.Value);
 
                 // 取得特定專案的週報
                 return Ok(_service.GetDataById(id));
@@ -64,7 +68,11 @@ namespace Gp_Api.Controllers
             try
             {
                 var roleIdClaim = User.Claims.FirstOrDefault(t => t.Type == "role_id");
+                var userIdClaim = User.Claims.FirstOrDefault(t => t.Type == "user_id");
+                var bookIdClaim = User.Claims.FirstOrDefault(t => t.Type == "book_id");
+                if (bookIdClaim != null) _service.BookId = Int16.Parse(bookIdClaim.Value);
                 if (roleIdClaim != null) _service.RoleId = Int16.Parse(roleIdClaim.Value);
+                if (userIdClaim != null) _service.UserId = Int16.Parse(userIdClaim.Value);
 
                 _service.InsertData(data);
                 _hubContext.Clients.All.SendAsync("Departments", "新增");

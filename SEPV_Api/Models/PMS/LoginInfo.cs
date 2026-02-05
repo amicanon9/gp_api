@@ -12,6 +12,8 @@ namespace SEPV_Api.Models.PMS
             Departments = new HashSet<Departments>();
             LeaveApplications = new HashSet<LeaveApplications>();
             LoginInfoRoles = new HashSet<LoginInfoRoles>();
+            ProjectSvc = new HashSet<ProjectSvc>();
+            ProjectSvcTeam = new HashSet<ProjectSvcTeam>();
         }
 
         public int Id { get; set; }
@@ -27,5 +29,7 @@ namespace SEPV_Api.Models.PMS
         public virtual ICollection<Departments> Departments { get; set; }
         public virtual ICollection<LeaveApplications> LeaveApplications { get; set; }
         public virtual ICollection<LoginInfoRoles> LoginInfoRoles { get; set; }
+        public virtual ICollection<ProjectSvc> ProjectSvc { get; set; }
+        public virtual ICollection<ProjectSvcTeam> ProjectSvcTeam { get; set; }
     }
 }

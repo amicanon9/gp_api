@@ -5,19 +5,18 @@ using System.Collections.Generic;
 
 namespace SEPV_Api.Models.PMS
 {
-    public partial class CheckinLogs
+    public partial class TaskMaster
     {
         public int Id { get; set; }
-        public int UserId { get; set; }
         public short BookId { get; set; }
-        public int? ProjectId { get; set; }
-        public DateTime? FakeTime { get; set; }
-        public DateTime CheckinTime { get; set; }
-        public string Mode { get; set; }
+        public string TaskName { get; set; }
+        public string Description { get; set; }
+        public string Category { get; set; }
+        public string Priority { get; set; }
         public string Status { get; set; }
+        public DateTime? CloseDate { get; set; }
         public DateTime? CreatedAt { get; set; }
-        public int? WorkPercentage { get; set; }
-        public string Type { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         public virtual SetOfBooks Book { get; set; }
     }

@@ -1,6 +1,6 @@
 ﻿using Gp_Api.IServices;
 using Microsoft.EntityFrameworkCore;
-using SEPV_Api.Models.PMS; // 確保包含您產生的 CheckinLogs Entity
+using SEPV_Api.Models.PMS;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,11 +22,9 @@ namespace Gp_Api.Services
     public class CheckinLogsView
     {
         public int id { get; set; }
-        // 新增時前端會傳一組 ID 陣列
         public int book_id { get; set; }
-        public List<int> project_ids { get; set; }
-        public int project_id { get; set; }
-        public string project_name { get; set; } // 補回這個欄位
+        public int? project_id { get; set; }
+        public string type { get; set; }           // 讓前端根據 type 決定去哪張 List 找名稱
         public int? user_id { get; set; }
         public DateTime checkin_time { get; set; }
         public DateTime? fake_time { get; set; }
@@ -35,6 +33,7 @@ namespace Gp_Api.Services
         public DateTime? created_at { get; set; }
         public int? work_percentage { get; set; }
     }
+
     public class CheckinLogsService : ICheckinLogsService
     {
         public short RoleId { get; set; }
@@ -49,48 +48,42 @@ namespace Gp_Api.Services
 
         public List<CheckinLogsView> GetAllData()
         {
-            var query = _PMSContext.CheckinLogs
+            return _PMSContext.CheckinLogs
                  .OrderByDescending(t => t.CheckinTime)
                  .Select(t => new CheckinLogsView
                  {
                      id = t.Id,
                      project_id = t.ProjectId,
+                     type = t.Type,
                      user_id = t.UserId,
                      checkin_time = t.CheckinTime,
                      mode = t.Mode,
                      status = t.Status,
                      created_at = t.CreatedAt
-                 });
-
-            return query.ToList();
+                 }).ToList();
         }
 
         public List<CheckinLogsView> GetDataById(int id)
         {
             DateTime oneMonthAgo = DateTime.Now.AddMonths(-1);
 
-            var query = _PMSContext.CheckinLogs
-                .Where(t => t.UserId == UserId && t.BookId==BookId && t.CheckinTime>= oneMonthAgo)
+            return _PMSContext.CheckinLogs
+                .Where(t => t.UserId == UserId && t.BookId == BookId && t.CheckinTime >= oneMonthAgo)
                 .OrderByDescending(t => t.CheckinTime)
-               .Select(t => new CheckinLogsView
-               {
-                   id = t.Id,
-                   project_id = t.ProjectId,
-                   book_id=t.BookId,
-                   project_name = _PMSContext.ProjectPlm
-                                .Where(p => p.Id == t.ProjectId)
-                                .Select(p => p.Customer.Name)
-                                .FirstOrDefault(),
-                   user_id = t.UserId,
-                   checkin_time = t.CheckinTime,
-                   fake_time = t.FakeTime,
-                   mode = t.Mode,
-                   status = t.Status,
-                   created_at = t.CreatedAt,
-                   work_percentage = t.WorkPercentage
-               });
-
-            return query.ToList();
+                .Select(t => new CheckinLogsView
+                {
+                    id = t.Id,
+                    project_id = t.ProjectId,
+                    type = t.Type,
+                    book_id = t.BookId,
+                    user_id = t.UserId,
+                    checkin_time = t.CheckinTime,
+                    fake_time = t.FakeTime,
+                    mode = t.Mode,
+                    status = t.Status,
+                    created_at = t.CreatedAt,
+                    work_percentage = t.WorkPercentage
+                }).ToList();
         }
 
         public void InsertData(List<CheckinLogsView> viewModelList)
@@ -105,7 +98,6 @@ namespace Gp_Api.Services
 
             if (firstItem.mode == "normal")
             {
-                // 邏輯修改：只要今天有過任何紀錄，這一批就全部標記為下班
                 bool hasRecordToday = _PMSContext.CheckinLogs
                     .Any(t => t.UserId == UserId && t.BookId == BookId &&
                               t.CheckinTime >= startOfToday &&
@@ -121,6 +113,7 @@ namespace Gp_Api.Services
                     UserId = UserId,
                     BookId = BookId,
                     ProjectId = item.project_id,
+                    Type = item.type, // 這裡存入前端傳過來的專案類型
                     CheckinTime = item.checkin_time,
                     FakeTime = item.fake_time,
                     Mode = item.mode,
@@ -133,6 +126,7 @@ namespace Gp_Api.Services
 
             _PMSContext.SaveChanges();
         }
+
         public string DeleteData(int id)
         {
             var data = _PMSContext.CheckinLogs.Find(id);
@@ -156,9 +150,11 @@ namespace Gp_Api.Services
             if (data == null) return "NotFound";
 
             data.ProjectId = viewModel.project_id;
+            data.Type = viewModel.type;
             data.CheckinTime = viewModel.checkin_time;
             data.Mode = viewModel.mode;
             data.Status = viewModel.status;
+            data.WorkPercentage = viewModel.work_percentage;
 
             try
             {
