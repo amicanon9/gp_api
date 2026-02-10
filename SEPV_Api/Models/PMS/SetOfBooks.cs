@@ -10,6 +10,8 @@ namespace SEPV_Api.Models.PMS
         public SetOfBooks()
         {
             CheckinLogs = new HashSet<CheckinLogs>();
+            Departments = new HashSet<Departments>();
+            ExpenseClaims = new HashSet<ExpenseClaims>();
             LoginInfo = new HashSet<LoginInfo>();
             LoginRoles = new HashSet<LoginRoles>();
             ProjectInternal = new HashSet<ProjectInternal>();
@@ -23,6 +25,8 @@ namespace SEPV_Api.Models.PMS
         public string Description { get; set; }
 
         public virtual ICollection<CheckinLogs> CheckinLogs { get; set; }
+        public virtual ICollection<Departments> Departments { get; set; }
+        public virtual ICollection<ExpenseClaims> ExpenseClaims { get; set; }
         public virtual ICollection<LoginInfo> LoginInfo { get; set; }
         public virtual ICollection<LoginRoles> LoginRoles { get; set; }
         public virtual ICollection<ProjectInternal> ProjectInternal { get; set; }

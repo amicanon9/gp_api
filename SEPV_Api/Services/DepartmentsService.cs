@@ -4,6 +4,7 @@ using SEPV_Api.Models.PMS; // 確保包含您產生的 Departments Entity
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Gp_Api.Services
 {
@@ -22,6 +23,7 @@ namespace Gp_Api.Services
     public class DepartmentsView
     {
         public int? Id { get; set; }
+        public short Book_id { get; set; }
         public string Dept_name { get; set; }
         public string Description { get; set; }
         public int? Manager_id { get; set; }      // 部門主管 ID
@@ -49,20 +51,27 @@ namespace Gp_Api.Services
                 .FirstOrDefault();
 
             // 統一使用 .Select 與 Lambda 處理關聯
-            return _PMSContext.Departments
+            var query = _PMSContext.Departments
                 .Select(t => new DepartmentsView
                 {
                     Id = t.Id,
+                    Book_id = t.BookId,
                     Dept_name = t.DeptName,
                     Description = t.Description,
                     Manager_id = t.ManagerId,
-                    // 透過導覽屬性 (Navigation Property) 直接抓取主管名稱，乾淨俐落
                     Manager_name = _PMSContext.LoginInfo
                         .Where(u => u.Id == t.ManagerId)
                         .Select(u => u.Username)
                         .FirstOrDefault() ?? "未指定"
-                })
-                .ToList();
+                });
+               
+            //if (check != null && !check.IsAdmin)
+            //{
+            //    BookId = check.BookId;
+            //    query = query.Where(a => a.Book_id == BookId);
+            //}
+
+            return query.ToList();
         }
 
         public DepartmentsView GetDataById(int id)
@@ -72,6 +81,7 @@ namespace Gp_Api.Services
                 .Select(t => new DepartmentsView
                 {
                     Id = t.Id,
+                    Book_id=t.BookId,
                     Dept_name = t.DeptName,
                     Description = t.Description,
                     Manager_id = t.ManagerId
@@ -83,6 +93,7 @@ namespace Gp_Api.Services
         {
             var data = new Departments
             {
+                BookId =BookId,
                 DeptName = viewModel.Dept_name,
                 Description = viewModel.Description,
                 ManagerId = viewModel.Manager_id

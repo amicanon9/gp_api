@@ -10,6 +10,7 @@ namespace SEPV_Api.Models.PMS
         public LoginInfo()
         {
             Departments = new HashSet<Departments>();
+            ExpenseClaims = new HashSet<ExpenseClaims>();
             LeaveApplications = new HashSet<LeaveApplications>();
             LoginInfoRoles = new HashSet<LoginInfoRoles>();
             ProjectSvc = new HashSet<ProjectSvc>();
@@ -27,6 +28,7 @@ namespace SEPV_Api.Models.PMS
 
         public virtual SetOfBooks Book { get; set; }
         public virtual ICollection<Departments> Departments { get; set; }
+        public virtual ICollection<ExpenseClaims> ExpenseClaims { get; set; }
         public virtual ICollection<LeaveApplications> LeaveApplications { get; set; }
         public virtual ICollection<LoginInfoRoles> LoginInfoRoles { get; set; }
         public virtual ICollection<ProjectSvc> ProjectSvc { get; set; }

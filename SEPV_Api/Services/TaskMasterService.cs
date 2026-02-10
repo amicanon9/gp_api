@@ -15,7 +15,7 @@ namespace Gp_Api.Services
         public short BookId { get; set; }
         public int RoleId { get; set; }
         public List<TaskMasterView> GetAllData();
-        public void InsertData(TaskMasterView data);
+        public int InsertData(TaskMasterView data);
         public string EditData(int id, TaskMasterView data);
         public string DeleteData(int id);
     }
@@ -62,7 +62,6 @@ namespace Gp_Api.Services
         {
             // 權限過濾：僅抓取該帳簿 (BookId) 的任務
             var query = _PMSContext.TaskMaster
-                .Where(p => p.BookId == BookId)
                 .AsQueryable();
 
             var dataList = query.Select(t => new TaskMasterView
@@ -91,7 +90,7 @@ namespace Gp_Api.Services
         /// <summary>
         /// 新增任務文字資料
         /// </summary>
-        public void InsertData(TaskMasterView viewModel)
+        public int InsertData(TaskMasterView viewModel)
         {
             var newData = new TaskMaster
             {
@@ -108,10 +107,8 @@ namespace Gp_Api.Services
             _PMSContext.TaskMaster.Add(newData);
             _PMSContext.SaveChanges();
 
-            // 將資料庫生成的 ID 回填，供後續上傳圖片使用
-            viewModel.id = newData.Id;
+            return newData.Id; // 明確回傳新 ID
         }
-
         /// <summary>
         /// 修改任務文字資料
         /// </summary>

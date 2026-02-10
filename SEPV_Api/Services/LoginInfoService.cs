@@ -102,7 +102,7 @@ namespace Gp_Api.Services
                         Company_name = b.Role.Book.Name
                     }).ToList()
                 })
-                .Where(a => a.Id == id && a.Book_id == BookId)
+                .Where(a => a.Id == id)
                 .FirstOrDefault();
         }
 

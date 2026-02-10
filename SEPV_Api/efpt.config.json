@@ -35,6 +35,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[ExpenseClaims]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Leave_applications]",
          "ObjectType": 0
       },

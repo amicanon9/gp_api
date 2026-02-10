@@ -13,10 +13,12 @@ namespace SEPV_Api.Models.PMS
         }
 
         public int Id { get; set; }
+        public short BookId { get; set; }
         public string DeptName { get; set; }
         public int? ManagerId { get; set; }
         public string Description { get; set; }
 
+        public virtual SetOfBooks Book { get; set; }
         public virtual LoginInfo Manager { get; set; }
         public virtual ICollection<LeaveApplications> LeaveApplications { get; set; }
     }

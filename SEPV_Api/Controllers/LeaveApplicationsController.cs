@@ -27,8 +27,8 @@ namespace Gp_Api.Controllers
         // 注入 User Claims 資訊到 Service
         private void SetServiceUserContext()
         {
-            var userIdClaim = User.Claims.FirstOrDefault(t => t.Type == "user_id");
-            if (userIdClaim != null) _service.UserId = Int16.Parse(userIdClaim.Value);
+            _service.UserId = Int16.Parse(User.Claims.FirstOrDefault(t => t.Type == "user_id").Value);
+            _service.RoleId = Int16.Parse(User.Claims.FirstOrDefault(t => t.Type == "role_id").Value);
         }
 
         [HttpGet]

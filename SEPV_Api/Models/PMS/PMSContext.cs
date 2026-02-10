@@ -23,6 +23,7 @@ namespace SEPV_Api.Models.PMS
         public virtual DbSet<CodeLookupSource> CodeLookupSource { get; set; }
         public virtual DbSet<CustomerPlm> CustomerPlm { get; set; }
         public virtual DbSet<Departments> Departments { get; set; }
+        public virtual DbSet<ExpenseClaims> ExpenseClaims { get; set; }
         public virtual DbSet<LeaveApplications> LeaveApplications { get; set; }
         public virtual DbSet<LoginInfo> LoginInfo { get; set; }
         public virtual DbSet<LoginInfoRoles> LoginInfoRoles { get; set; }
@@ -252,6 +253,8 @@ namespace SEPV_Api.Models.PMS
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.BookId).HasColumnName("book_id");
+
                 entity.Property(e => e.DeptName)
                     .IsRequired()
                     .HasMaxLength(50)
@@ -263,10 +266,107 @@ namespace SEPV_Api.Models.PMS
 
                 entity.Property(e => e.ManagerId).HasColumnName("manager_id");
 
+                entity.HasOne(d => d.Book)
+                    .WithMany(p => p.Departments)
+                    .HasForeignKey(d => d.BookId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_departments_set_of_books");
+
                 entity.HasOne(d => d.Manager)
                     .WithMany(p => p.Departments)
                     .HasForeignKey(d => d.ManagerId)
                     .HasConstraintName("FK_departments_login_info");
+            });
+
+            modelBuilder.Entity<ExpenseClaims>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.BookId).HasColumnName("book_id");
+
+                entity.Property(e => e.CategoryItem)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("category_item");
+
+                entity.Property(e => e.CategoryMain)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("category_main");
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_at")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(500)
+                    .HasColumnName("description");
+
+                entity.Property(e => e.ExpenseDate)
+                    .HasColumnType("date")
+                    .HasColumnName("expense_date");
+
+                entity.Property(e => e.ItemName)
+                    .HasMaxLength(200)
+                    .HasColumnName("item_name");
+
+                entity.Property(e => e.LocationFromTo)
+                    .HasMaxLength(200)
+                    .HasColumnName("location_from_to");
+
+                entity.Property(e => e.ManualAmount)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("manual_amount");
+
+                entity.Property(e => e.Mileage)
+                    .HasColumnType("decimal(10, 2)")
+                    .HasColumnName("mileage");
+
+                entity.Property(e => e.ParkingFee)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("parking_fee")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.ProjectId).HasColumnName("project_id");
+
+                entity.Property(e => e.ProjectType)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .HasColumnName("project_type");
+
+                entity.Property(e => e.SubsidyUnitPrice)
+                    .HasColumnType("decimal(10, 2)")
+                    .HasColumnName("subsidy_unit_price")
+                    .HasDefaultValueSql("((7))");
+
+                entity.Property(e => e.TollFee)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("toll_fee")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.TotalAmount)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("total_amount");
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updated_at")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.UserId).HasColumnName("user_id");
+
+                entity.HasOne(d => d.Book)
+                    .WithMany(p => p.ExpenseClaims)
+                    .HasForeignKey(d => d.BookId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ExpenseClaims_set_of_books");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.ExpenseClaims)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ExpenseClaims_login_info");
             });
 
             modelBuilder.Entity<LeaveApplications>(entity =>

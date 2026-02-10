@@ -83,7 +83,7 @@ namespace Gp_Api.Services
                     status = t.Status,
                     created_at = t.CreatedAt,
                     work_percentage = t.WorkPercentage
-                }).ToList();
+                }).Take(60).ToList();
         }
 
         public void InsertData(List<CheckinLogsView> viewModelList)

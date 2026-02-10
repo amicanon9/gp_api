@@ -47,7 +47,7 @@ namespace Gp_Api.Services
             // 從資料庫抓取「打卡工具」與「請假單」的原始物件 (假設 Url 分別為 /checkin 和 /leave)
             // 這樣可以確保它們的 Parent 關係與 Icon 能正確被 GetChild 處理
             var commonTools = _PMSContext.LoginMenus
-                .Where(m => m.Url == "/checkin" || m.Url == "/leaveapplications")
+                .Where(m => m.Url == "/checkin" || m.Url == "/leaveapplications" || m.Url == "/expenseclaims")
                 .ToList();
 
             foreach (var tool in commonTools)

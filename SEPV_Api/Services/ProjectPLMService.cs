@@ -112,7 +112,7 @@ namespace Gp_Api.Services
             var query = _PMSContext.ProjectPlm.AsQueryable();
             if (!check.IsAdmin)
             {
-                query = query.Where(a => userRoleIds.Contains(a.RoleId));
+                query = query.Where(a => userRoleIds.Contains(a.RoleId) &&  a.BookId==BookId);
             }
             return query.Select(t => new ProjectPlmView
             {

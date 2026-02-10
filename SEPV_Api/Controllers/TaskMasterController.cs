@@ -56,11 +56,19 @@ namespace Gp_Api.Controllers
             try
             {
                 SetServiceClaims();
-                _service.InsertData(data);
+
+                // 接收 Service 回傳的 ID
+                int newId = _service.InsertData(data);
+
                 _hubContext.Clients.All.SendAsync("TaskMaster", "新增");
-                return Ok(new { result = "inserted", id = data.id });
+
+                // 回傳給前端，確保 key 名稱是 id
+                return Ok(new { result = "inserted", id = newId });
             }
-            catch (Exception ex) { return BadRequest(new { message = ex.Message }); }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpPatch("{id}")]
@@ -96,55 +104,6 @@ namespace Gp_Api.Controllers
             catch (Exception ex) { return BadRequest(new { message = ex.Message }); }
         }
 
-        #region 檔案處理動態端點 (配合 FileUploadComponent)
-
-        // 取得檔案清單 (組件重新整理用)
-        [HttpGet("{id}/images/{category}")]
-        public IActionResult GetFileList(int id, string category)
-        {
-            try
-            {
-                var files = _fileService.GetDataNameList(id, category);
-                return Ok(files);
-            }
-            catch (Exception ex) { return BadRequest(new { message = ex.Message }); }
-        }
-
-        // 上傳檔案
-        [HttpPost("{id}/images/{category}")]
-        public IActionResult UploadImages(int id, string category, List<IFormFile> files)
-        {
-            var result = _fileService.UploadData(files, id, category);
-            if (result.Status == "Ok")
-            {
-                _hubContext.Clients.All.SendAsync("TaskMaster", "圖片更新");
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        // 下載檔案
-        [HttpGet("{id}/images/{category}/{fileName}")]
-        public IActionResult DownloadImage(int id, string category, string fileName)
-        {
-            var result = _fileService.DownloadData(fileName, id, category);
-            if (result == null) return NotFound();
-            return File(result.File_byte, result.Option, result.File_name);
-        }
-
-        // 刪除檔案
-        [HttpDelete("{id}/images/{category}/{fileName}")]
-        public IActionResult DeleteImage(int id, string category, string fileName)
-        {
-            var result = _fileService.DeleteData(fileName, id, category);
-            if (result.Status == "Ok")
-            {
-                _hubContext.Clients.All.SendAsync("TaskMaster", "圖片刪除");
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        #endregion
+      
     }
 }

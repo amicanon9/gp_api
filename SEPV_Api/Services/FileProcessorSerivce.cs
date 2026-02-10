@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using SEPV_Api.Models.PMS;
 using System;
 using System.Collections.Generic;
@@ -41,29 +42,21 @@ namespace PMS_api.Services
         private readonly PMSContext _pmsContext;
         private readonly string basePath = @"C:\pms_files\";
 
-        public FileProcessorService(PMSContext pmsContext)
+        public FileProcessorService(PMSContext pmsContext, IConfiguration configuration)
         {
+            basePath = configuration["FileStorage:BasePath"];
             _pmsContext = pmsContext;
         }
 
         /// <summary>
         /// 檢查資料庫中是否存在該項目，避免孤兒檔案
         /// </summary>
-        private bool IsTargetExist(int item_id, string category)
-        {
-            return category.ToLower() switch
-            {
-                "task" => _pmsContext.TaskMaster.Any(a => a.Id == item_id),
-                _ => false
-            };
-        }
+   
 
         public FileProcessorResult UploadData(List<IFormFile> files, int item_id, string category)
         {
             // 1. 驗證資料合法性
-            if (!IsTargetExist(item_id, category))
-                return new FileProcessorResult { Status = "NotFound", Message = $"無法在 {category} 中找到 ID 為 {item_id} 的資料物件" };
-
+         
             // 2. 確定目錄結構：C:\pms_files\{category}\{item_id}
             string targetFolder = Path.Combine(basePath, category, item_id.ToString());
 
