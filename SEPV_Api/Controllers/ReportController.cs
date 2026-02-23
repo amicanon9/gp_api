@@ -27,9 +27,9 @@ namespace Gp_Api.Controllers
                 return BadRequest("請提供報表名稱（reportName）。");
 
             //string reportServerUrl = "http://10.1.3.16/ReportServer";
-            string reportServerUrl = "http://192.168.1.80/ReportServer";
+            string reportServerUrl = "http://aserver01/ReportServer";
             string username = "demo";
-            string password = "Spv0901&12";
+            string password = "Abcd1234!!";
             string domain = "";
 
             // 拿出報表名稱並移除它，剩下的都是參數
@@ -43,7 +43,7 @@ namespace Gp_Api.Controllers
                 reportRequest.Remove("format");
             }
 
-            string reportPath = $"/網頁用報表/{reportName}";
+            string reportPath = $"/{reportName}";
 
             // 組合查詢參數
             var paramString = string.Join("&", reportRequest.Select(kvp =>
