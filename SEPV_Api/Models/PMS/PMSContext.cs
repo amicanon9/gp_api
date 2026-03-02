@@ -3,933 +3,812 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace SEPV_Api.Models.PMS
+namespace SEPV_Api.Models.PMS;
+
+public partial class PMSContext : DbContext
 {
-    public partial class PMSContext : DbContext
+    public PMSContext(DbContextOptions<PMSContext> options)
+        : base(options)
     {
-        public PMSContext()
-        {
-        }
-
-        public PMSContext(DbContextOptions<PMSContext> options)
-            : base(options)
-        {
-        }
-
-        public virtual DbSet<CheckinLogs> CheckinLogs { get; set; }
-        public virtual DbSet<CodeLookup> CodeLookup { get; set; }
-        public virtual DbSet<CodeLookupSource> CodeLookupSource { get; set; }
-        public virtual DbSet<CustomerPlm> CustomerPlm { get; set; }
-        public virtual DbSet<Departments> Departments { get; set; }
-        public virtual DbSet<ExpenseClaims> ExpenseClaims { get; set; }
-        public virtual DbSet<LeaveApplications> LeaveApplications { get; set; }
-        public virtual DbSet<LoginInfo> LoginInfo { get; set; }
-        public virtual DbSet<LoginInfoRoles> LoginInfoRoles { get; set; }
-        public virtual DbSet<LoginMenus> LoginMenus { get; set; }
-        public virtual DbSet<LoginRoles> LoginRoles { get; set; }
-        public virtual DbSet<LoginRolesMenus> LoginRolesMenus { get; set; }
-        public virtual DbSet<ProjectInternal> ProjectInternal { get; set; }
-        public virtual DbSet<ProjectPlm> ProjectPlm { get; set; }
-        public virtual DbSet<ProjectSvc> ProjectSvc { get; set; }
-        public virtual DbSet<ProjectSvcTeam> ProjectSvcTeam { get; set; }
-        public virtual DbSet<SetOfBooks> SetOfBooks { get; set; }
-        public virtual DbSet<TaskMaster> TaskMaster { get; set; }
-        public virtual DbSet<WeeklyReportPlm> WeeklyReportPlm { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<CheckinLogs>(entity =>
-            {
-                entity.HasIndex(e => e.ProjectId, "IX_CheckinLogs_ProjectId");
-
-                entity.HasIndex(e => new { e.UserId, e.CheckinTime }, "IX_CheckinLogs_User_Time");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.BookId).HasColumnName("book_id");
-
-                entity.Property(e => e.CheckinTime)
-                    .HasColumnType("datetime")
-                    .HasColumnName("checkin_time");
-
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("created_at")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.FakeTime)
-                    .HasColumnType("datetime")
-                    .HasColumnName("fake_time");
-
-                entity.Property(e => e.Mode)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("mode");
-
-                entity.Property(e => e.ProjectId).HasColumnName("project_id");
-
-                entity.Property(e => e.Status)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("status");
-
-                entity.Property(e => e.Type)
-                    .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .HasColumnName("type");
-
-                entity.Property(e => e.UserId).HasColumnName("user_id");
-
-                entity.Property(e => e.WorkPercentage).HasColumnName("work_percentage");
-
-                entity.HasOne(d => d.Book)
-                    .WithMany(p => p.CheckinLogs)
-                    .HasForeignKey(d => d.BookId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_CheckinLogs_set_of_books");
-            });
-
-            modelBuilder.Entity<CodeLookup>(entity =>
-            {
-                entity.HasKey(e => new { e.SourceTable, e.Code });
-
-                entity.ToTable("code_lookup");
-
-                entity.Property(e => e.SourceTable)
-                    .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .HasColumnName("source_table");
-
-                entity.Property(e => e.Code)
-                    .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .HasColumnName("code");
-
-                entity.Property(e => e.Description)
-                    .HasMaxLength(50)
-                    .HasColumnName("description");
-
-                entity.HasOne(d => d.SourceTableNavigation)
-                    .WithMany(p => p.CodeLookup)
-                    .HasForeignKey(d => d.SourceTable)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_code_lookup_code_lookup_source");
-            });
-
-            modelBuilder.Entity<CodeLookupSource>(entity =>
-            {
-                entity.HasKey(e => e.SourceTable);
-
-                entity.ToTable("code_lookup_source");
-
-                entity.Property(e => e.SourceTable)
-                    .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .HasColumnName("source_table");
-
-                entity.Property(e => e.Description)
-                    .HasMaxLength(50)
-                    .HasColumnName("description");
-            });
-
-            modelBuilder.Entity<CustomerPlm>(entity =>
-            {
-                entity.ToTable("CustomerPLM");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Contact)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("contact");
-
-                entity.Property(e => e.Contact2)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("contact2");
-
-                entity.Property(e => e.Contact3)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("contact3");
-
-                entity.Property(e => e.Contact4)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("contact4");
-
-                entity.Property(e => e.Contact5)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("contact5");
-
-                entity.Property(e => e.DecisionLevel)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("decision_level");
-
-                entity.Property(e => e.Description)
-                    .HasMaxLength(500)
-                    .IsUnicode(false)
-                    .HasColumnName("description");
-
-                entity.Property(e => e.Email)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("email");
-
-                entity.Property(e => e.Email2)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("email2");
-
-                entity.Property(e => e.Email3)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("email3");
-
-                entity.Property(e => e.Email4)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("email4");
-
-                entity.Property(e => e.Email5)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("email5");
-
-                entity.Property(e => e.ExistingCad)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("existing_cad");
-
-                entity.Property(e => e.ExistingPlm)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("existing_plm");
-
-                entity.Property(e => e.IndustryCrm)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("industry_crm");
-
-                entity.Property(e => e.Name)
-                    .HasMaxLength(50)
-                    .HasColumnName("name");
-
-                entity.Property(e => e.TaxIdNo).HasColumnName("tax_id_no");
-
-                entity.Property(e => e.Telephone)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("telephone");
-
-                entity.Property(e => e.Telephone2)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("telephone2");
-
-                entity.Property(e => e.Telephone3)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("telephone3");
-
-                entity.Property(e => e.Telephone4)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("telephone4");
-
-                entity.Property(e => e.Telephone5)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("telephone5");
-            });
-
-            modelBuilder.Entity<Departments>(entity =>
-            {
-                entity.ToTable("departments");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.BookId).HasColumnName("book_id");
-
-                entity.Property(e => e.DeptName)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnName("dept_name");
-
-                entity.Property(e => e.Description)
-                    .HasMaxLength(100)
-                    .HasColumnName("description");
-
-                entity.Property(e => e.ManagerId).HasColumnName("manager_id");
-
-                entity.HasOne(d => d.Book)
-                    .WithMany(p => p.Departments)
-                    .HasForeignKey(d => d.BookId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_departments_set_of_books");
-
-                entity.HasOne(d => d.Manager)
-                    .WithMany(p => p.Departments)
-                    .HasForeignKey(d => d.ManagerId)
-                    .HasConstraintName("FK_departments_login_info");
-            });
-
-            modelBuilder.Entity<ExpenseClaims>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.BookId).HasColumnName("book_id");
-
-                entity.Property(e => e.CategoryItem)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnName("category_item");
-
-                entity.Property(e => e.CategoryMain)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnName("category_main");
-
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("created_at")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.Description)
-                    .HasMaxLength(500)
-                    .HasColumnName("description");
-
-                entity.Property(e => e.ExpenseDate)
-                    .HasColumnType("date")
-                    .HasColumnName("expense_date");
-
-                entity.Property(e => e.ItemName)
-                    .HasMaxLength(200)
-                    .HasColumnName("item_name");
-
-                entity.Property(e => e.LocationFromTo)
-                    .HasMaxLength(200)
-                    .HasColumnName("location_from_to");
-
-                entity.Property(e => e.ManualAmount)
-                    .HasColumnType("decimal(18, 2)")
-                    .HasColumnName("manual_amount");
-
-                entity.Property(e => e.Mileage)
-                    .HasColumnType("decimal(10, 2)")
-                    .HasColumnName("mileage");
-
-                entity.Property(e => e.ParkingFee)
-                    .HasColumnType("decimal(18, 2)")
-                    .HasColumnName("parking_fee")
-                    .HasDefaultValueSql("((0))");
-
-                entity.Property(e => e.ProjectId).HasColumnName("project_id");
-
-                entity.Property(e => e.ProjectType)
-                    .IsRequired()
-                    .HasMaxLength(20)
-                    .HasColumnName("project_type");
-
-                entity.Property(e => e.SubsidyUnitPrice)
-                    .HasColumnType("decimal(10, 2)")
-                    .HasColumnName("subsidy_unit_price")
-                    .HasDefaultValueSql("((7))");
-
-                entity.Property(e => e.TollFee)
-                    .HasColumnType("decimal(18, 2)")
-                    .HasColumnName("toll_fee")
-                    .HasDefaultValueSql("((0))");
-
-                entity.Property(e => e.TotalAmount)
-                    .HasColumnType("decimal(18, 2)")
-                    .HasColumnName("total_amount");
-
-                entity.Property(e => e.UpdatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("updated_at")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.UserId).HasColumnName("user_id");
-
-                entity.HasOne(d => d.Book)
-                    .WithMany(p => p.ExpenseClaims)
-                    .HasForeignKey(d => d.BookId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ExpenseClaims_set_of_books");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.ExpenseClaims)
-                    .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ExpenseClaims_login_info");
-            });
-
-            modelBuilder.Entity<LeaveApplications>(entity =>
-            {
-                entity.ToTable("Leave_applications");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("created_at")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.DeptId).HasColumnName("dept_id");
-
-                entity.Property(e => e.EndTime)
-                    .HasColumnType("datetime")
-                    .HasColumnName("end_time");
-
-                entity.Property(e => e.LeaveType)
-                    .IsRequired()
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("leave_type");
-
-                entity.Property(e => e.ManagerRemark)
-                    .HasMaxLength(500)
-                    .HasColumnName("manager_remark");
-
-                entity.Property(e => e.Reason)
-                    .HasMaxLength(500)
-                    .HasColumnName("reason");
-
-                entity.Property(e => e.StartTime)
-                    .HasColumnType("datetime")
-                    .HasColumnName("start_time");
-
-                entity.Property(e => e.Status)
-                    .IsRequired()
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("status")
-                    .HasDefaultValueSql("('特休')");
-
-                entity.Property(e => e.TotalHours)
-                    .HasColumnType("decimal(5, 1)")
-                    .HasColumnName("total_hours");
-
-                entity.Property(e => e.UpdatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("updated_at");
-
-                entity.Property(e => e.UserId).HasColumnName("user_id");
-
-                entity.HasOne(d => d.Dept)
-                    .WithMany(p => p.LeaveApplications)
-                    .HasForeignKey(d => d.DeptId)
-                    .HasConstraintName("FK_Leave_applications_departments");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.LeaveApplications)
-                    .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Leave_applications_login_info");
-            });
-
-            modelBuilder.Entity<LoginInfo>(entity =>
-            {
-                entity.ToTable("login_info");
-
-                entity.HasIndex(e => e.Username, "IX_login_info")
-                    .IsUnique();
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.BookId).HasColumnName("book_id");
-
-                entity.Property(e => e.DeptId).HasColumnName("dept_id");
-
-                entity.Property(e => e.Description)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("description");
-
-                entity.Property(e => e.Disabled).HasColumnName("disabled");
-
-                entity.Property(e => e.JoinedDate)
-                    .HasColumnType("date")
-                    .HasColumnName("joined_date");
-
-                entity.Property(e => e.Password)
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("password");
-
-                entity.Property(e => e.Username)
-                    .IsRequired()
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("username");
-
-                entity.HasOne(d => d.Book)
-                    .WithMany(p => p.LoginInfo)
-                    .HasForeignKey(d => d.BookId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_login_info_set_of_books");
-            });
-
-            modelBuilder.Entity<LoginInfoRoles>(entity =>
-            {
-                entity.ToTable("login_info_roles");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.InfoId).HasColumnName("info_id");
-
-                entity.Property(e => e.RoleId).HasColumnName("role_id");
-
-                entity.HasOne(d => d.Info)
-                    .WithMany(p => p.LoginInfoRoles)
-                    .HasForeignKey(d => d.InfoId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_login_info_roles_login_info");
-
-                entity.HasOne(d => d.Role)
-                    .WithMany(p => p.LoginInfoRoles)
-                    .HasForeignKey(d => d.RoleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_login_info_roles_login_roles");
-            });
-
-            modelBuilder.Entity<LoginMenus>(entity =>
-            {
-                entity.ToTable("login_menus");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Description)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("description");
-
-                entity.Property(e => e.Icon)
-                    .HasMaxLength(30)
-                    .IsUnicode(false)
-                    .HasColumnName("icon");
-
-                entity.Property(e => e.IsNode)
-                    .IsRequired()
-                    .HasColumnName("isNode")
-                    .HasDefaultValueSql("((1))");
-
-                entity.Property(e => e.MenuName)
-                    .IsRequired()
-                    .HasMaxLength(25)
-                    .IsUnicode(false)
-                    .HasColumnName("menu_name");
-
-                entity.Property(e => e.Parent).HasColumnName("parent");
-
-                entity.Property(e => e.SeqNo).HasColumnName("seq_no");
-
-                entity.Property(e => e.Url)
-                    .IsRequired()
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("url");
-            });
-
-            modelBuilder.Entity<LoginRoles>(entity =>
-            {
-                entity.ToTable("login_roles");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.BookId).HasColumnName("book_id");
-
-                entity.Property(e => e.Description)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("description");
-
-                entity.Property(e => e.Disabled).HasColumnName("disabled");
-
-                entity.Property(e => e.IsAdmin).HasColumnName("isAdmin");
-
-                entity.Property(e => e.PermissionLevel)
-                    .HasColumnName("permission_level")
-                    .HasDefaultValueSql("((1))");
-
-                entity.Property(e => e.RoleName)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("role_name");
-
-                entity.HasOne(d => d.Book)
-                    .WithMany(p => p.LoginRoles)
-                    .HasForeignKey(d => d.BookId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_login_roles_set_of_books");
-            });
-
-            modelBuilder.Entity<LoginRolesMenus>(entity =>
-            {
-                entity.ToTable("login_roles_menus");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.MenuId).HasColumnName("menu_id");
-
-                entity.Property(e => e.RoleId).HasColumnName("role_id");
-
-                entity.HasOne(d => d.Menu)
-                    .WithMany(p => p.LoginRolesMenus)
-                    .HasForeignKey(d => d.MenuId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_login_roles_menus_login_menus");
-
-                entity.HasOne(d => d.Role)
-                    .WithMany(p => p.LoginRolesMenus)
-                    .HasForeignKey(d => d.RoleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_login_roles_menus_login_roles");
-            });
-
-            modelBuilder.Entity<ProjectInternal>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.BookId).HasColumnName("book_id");
-
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("created_at")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.Description)
-                    .HasMaxLength(500)
-                    .HasColumnName("description");
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(200)
-                    .HasColumnName("name");
-
-                entity.Property(e => e.UpdatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("updated_at");
-
-                entity.HasOne(d => d.Book)
-                    .WithMany(p => p.ProjectInternal)
-                    .HasForeignKey(d => d.BookId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ProjectInternal_set_of_books");
-            });
-
-            modelBuilder.Entity<ProjectPlm>(entity =>
-            {
-                entity.ToTable("ProjectPLM");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.AgsStatus)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("ags_status");
-
-                entity.Property(e => e.BookId).HasColumnName("book_id");
-
-                entity.Property(e => e.CloseDate)
-                    .HasColumnType("date")
-                    .HasColumnName("close_date");
-
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("created_at")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.CustomerId).HasColumnName("customer_id");
-
-                entity.Property(e => e.IsAgsBooking).HasColumnName("is_ags_booking");
-
-                entity.Property(e => e.IsSystemChecked).HasColumnName("is_system_checked");
-
-                entity.Property(e => e.Month).HasColumnName("month");
-
-                entity.Property(e => e.NetToDsAmount)
-                    .HasColumnType("decimal(18, 2)")
-                    .HasColumnName("net_to_ds_amount");
-
-                entity.Property(e => e.Quarter)
-                    .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .HasColumnName("quarter");
-
-                entity.Property(e => e.RfqToClientAmount)
-                    .HasColumnType("decimal(18, 2)")
-                    .HasColumnName("rfq_to_client_amount");
-
-                entity.Property(e => e.RoleId).HasColumnName("role_id");
-
-                entity.Property(e => e.SalesOwner).HasColumnName("sales_owner");
-
-                entity.Property(e => e.ServiceOwner).HasColumnName("service_owner");
-
-                entity.Property(e => e.SolutionMapping)
-                    .HasMaxLength(300)
-                    .IsUnicode(false)
-                    .HasColumnName("solution_mapping");
-
-                entity.Property(e => e.SystemInquiryChannel)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("system_inquiry_channel");
-
-                entity.Property(e => e.UnderControlLongshotYearQ)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("under_control_longshot_year_q");
-
-                entity.Property(e => e.UpdatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("updated_at");
-
-                entity.Property(e => e.Year).HasColumnName("year");
-
-                entity.HasOne(d => d.Book)
-                    .WithMany(p => p.ProjectPlm)
-                    .HasForeignKey(d => d.BookId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ProjectPLM_set_of_books");
-
-                entity.HasOne(d => d.Customer)
-                    .WithMany(p => p.ProjectPlm)
-                    .HasForeignKey(d => d.CustomerId)
-                    .HasConstraintName("FK_ProjectPLM_CustomerPLM");
-
-                entity.HasOne(d => d.Role)
-                    .WithMany(p => p.ProjectPlm)
-                    .HasForeignKey(d => d.RoleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ProjectPLM_login_roles");
-            });
-
-            modelBuilder.Entity<ProjectSvc>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.AccessDate)
-                    .HasColumnType("date")
-                    .HasColumnName("access_date");
-
-                entity.Property(e => e.ActualDays)
-                    .HasColumnType("decimal(10, 2)")
-                    .HasColumnName("actual_days");
-
-                entity.Property(e => e.BookId).HasColumnName("book_id");
-
-                entity.Property(e => e.ContractAmount)
-                    .HasColumnType("decimal(18, 2)")
-                    .HasColumnName("contract_amount");
-
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("created_at")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.DefineDate)
-                    .HasColumnType("date")
-                    .HasColumnName("define_date");
-
-                entity.Property(e => e.DesignDate)
-                    .HasColumnType("date")
-                    .HasColumnName("design_date");
-
-                entity.Property(e => e.GoLiveDate)
-                    .HasColumnType("date")
-                    .HasColumnName("go_live_date");
-
-                entity.Property(e => e.KickoffDate)
-                    .HasColumnType("date")
-                    .HasColumnName("kickoff_date");
-
-                entity.Property(e => e.MarginPercentage)
-                    .HasColumnType("decimal(5, 2)")
-                    .HasColumnName("margin_percentage");
-
-                entity.Property(e => e.PlannedDays)
-                    .HasColumnType("decimal(10, 2)")
-                    .HasColumnName("planned_days");
-
-                entity.Property(e => e.ProjectManagerId).HasColumnName("project_manager_id");
-
-                entity.Property(e => e.ProjectName)
-                    .IsRequired()
-                    .HasMaxLength(200)
-                    .HasColumnName("project_name");
-
-                entity.Property(e => e.RolloutDate)
-                    .HasColumnType("date")
-                    .HasColumnName("rollout_date");
-
-                entity.Property(e => e.SowSignedDate)
-                    .HasColumnType("date")
-                    .HasColumnName("sow_signed_date");
-
-                entity.Property(e => e.UatDate)
-                    .HasColumnType("date")
-                    .HasColumnName("uat_date");
-
-                entity.Property(e => e.UpdatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("updated_at");
-
-                entity.HasOne(d => d.Book)
-                    .WithMany(p => p.ProjectSvc)
-                    .HasForeignKey(d => d.BookId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ProjectSvc_set_of_books");
-
-                entity.HasOne(d => d.ProjectManager)
-                    .WithMany(p => p.ProjectSvc)
-                    .HasForeignKey(d => d.ProjectManagerId)
-                    .HasConstraintName("FK_ProjectSvc_PM");
-            });
-
-            modelBuilder.Entity<ProjectSvcTeam>(entity =>
-            {
-                entity.HasKey(e => new { e.ProjectSvcId, e.UserId });
-
-                entity.Property(e => e.ProjectSvcId).HasColumnName("project_svc_id");
-
-                entity.Property(e => e.UserId).HasColumnName("user_id");
-
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("created_at")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.HasOne(d => d.ProjectSvc)
-                    .WithMany(p => p.ProjectSvcTeam)
-                    .HasForeignKey(d => d.ProjectSvcId)
-                    .HasConstraintName("FK_ProjectSvcTeam_ProjectSvc");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.ProjectSvcTeam)
-                    .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ProjectSvcTeam_login_info");
-            });
-
-            modelBuilder.Entity<SetOfBooks>(entity =>
-            {
-                entity.HasKey(e => e.BookId);
-
-                entity.ToTable("set_of_books");
-
-                entity.Property(e => e.BookId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("book_id");
-
-                entity.Property(e => e.Description)
-                    .HasMaxLength(250)
-                    .IsUnicode(false)
-                    .HasColumnName("description");
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("name");
-            });
-
-            modelBuilder.Entity<TaskMaster>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.BookId).HasColumnName("book_id");
-
-                entity.Property(e => e.Category)
-                    .IsRequired()
-                    .HasMaxLength(20)
-                    .HasColumnName("category");
-
-                entity.Property(e => e.CloseDate)
-                    .HasColumnType("date")
-                    .HasColumnName("close_date");
-
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("created_at")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.Description).HasColumnName("description");
-
-                entity.Property(e => e.Priority)
-                    .IsRequired()
-                    .HasMaxLength(20)
-                    .HasColumnName("priority");
-
-                entity.Property(e => e.Status)
-                    .IsRequired()
-                    .HasMaxLength(20)
-                    .HasColumnName("status");
-
-                entity.Property(e => e.TaskName)
-                    .IsRequired()
-                    .HasMaxLength(200)
-                    .HasColumnName("task_name");
-
-                entity.Property(e => e.UpdatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("updated_at");
-
-                entity.HasOne(d => d.Book)
-                    .WithMany(p => p.TaskMaster)
-                    .HasForeignKey(d => d.BookId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_TaskMaster_set_of_books");
-            });
-
-            modelBuilder.Entity<WeeklyReportPlm>(entity =>
-            {
-                entity.ToTable("WeeklyReportPLM");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.AgsStatus)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("ags_status");
-
-                entity.Property(e => e.Content).HasColumnName("content");
-
-                entity.Property(e => e.ContentDetail).HasColumnName("content_detail");
-
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("created_at")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.ProjectId).HasColumnName("project_id");
-
-                entity.Property(e => e.UpdatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("updated_at");
-
-                entity.Property(e => e.Week).HasColumnName("week");
-
-                entity.Property(e => e.Year).HasColumnName("year");
-
-                entity.HasOne(d => d.Project)
-                    .WithMany(p => p.WeeklyReportPlm)
-                    .HasForeignKey(d => d.ProjectId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_WeeklyReport_Project");
-            });
-
-            OnModelCreatingPartial(modelBuilder);
-        }
-
-        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
+
+    public virtual DbSet<CheckinLogs> CheckinLogs { get; set; }
+
+    public virtual DbSet<CodeLookup> CodeLookup { get; set; }
+
+    public virtual DbSet<CodeLookupSource> CodeLookupSource { get; set; }
+
+    public virtual DbSet<CustomerPlm> CustomerPlm { get; set; }
+
+    public virtual DbSet<Departments> Departments { get; set; }
+
+    public virtual DbSet<ExpenseClaims> ExpenseClaims { get; set; }
+
+    public virtual DbSet<LeaveApplications> LeaveApplications { get; set; }
+
+    public virtual DbSet<LoginInfo> LoginInfo { get; set; }
+
+    public virtual DbSet<LoginInfoRoles> LoginInfoRoles { get; set; }
+
+    public virtual DbSet<LoginMenus> LoginMenus { get; set; }
+
+    public virtual DbSet<LoginRoles> LoginRoles { get; set; }
+
+    public virtual DbSet<LoginRolesMenus> LoginRolesMenus { get; set; }
+
+    public virtual DbSet<ProjectFirm> ProjectFirm { get; set; }
+
+    public virtual DbSet<ProjectInternal> ProjectInternal { get; set; }
+
+    public virtual DbSet<ProjectPlm> ProjectPlm { get; set; }
+
+    public virtual DbSet<ProjectSvc> ProjectSvc { get; set; }
+
+    public virtual DbSet<ProjectSvcTeam> ProjectSvcTeam { get; set; }
+
+    public virtual DbSet<SetOfBooks> SetOfBooks { get; set; }
+
+    public virtual DbSet<TaskMaster> TaskMaster { get; set; }
+
+    public virtual DbSet<WeeklyReportPlm> WeeklyReportPlm { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<CheckinLogs>(entity =>
+        {
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.BookId).HasColumnName("book_id");
+            entity.Property(e => e.CheckinTime)
+                .HasColumnType("datetime")
+                .HasColumnName("checkin_time");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasAnnotation("Relational:DefaultConstraintName", "DF__CheckinLo__creat__7AF13DF7")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.FakeTime)
+                .HasColumnType("datetime")
+                .HasColumnName("fake_time");
+            entity.Property(e => e.Mode)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("mode");
+            entity.Property(e => e.ProjectId).HasColumnName("project_id");
+            entity.Property(e => e.Status)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("status");
+            entity.Property(e => e.Type)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("type");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.WorkPercentage).HasColumnName("work_percentage");
+
+            entity.HasOne(d => d.Book).WithMany(p => p.CheckinLogs)
+                .HasForeignKey(d => d.BookId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CheckinLogs_set_of_books");
+        });
+
+        modelBuilder.Entity<CodeLookup>(entity =>
+        {
+            entity.HasKey(e => new { e.SourceTable, e.Code });
+
+            entity.ToTable("code_lookup");
+
+            entity.Property(e => e.SourceTable)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("source_table");
+            entity.Property(e => e.Code)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("code");
+            entity.Property(e => e.Description)
+                .HasMaxLength(50)
+                .HasColumnName("description");
+
+            entity.HasOne(d => d.SourceTableNavigation).WithMany(p => p.CodeLookup)
+                .HasForeignKey(d => d.SourceTable)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_code_lookup_code_lookup_source");
+        });
+
+        modelBuilder.Entity<CodeLookupSource>(entity =>
+        {
+            entity.HasKey(e => e.SourceTable);
+
+            entity.ToTable("code_lookup_source");
+
+            entity.Property(e => e.SourceTable)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("source_table");
+            entity.Property(e => e.Description)
+                .HasMaxLength(50)
+                .HasColumnName("description");
+        });
+
+        modelBuilder.Entity<CustomerPlm>(entity =>
+        {
+            entity.ToTable("CustomerPLM");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Contact)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("contact");
+            entity.Property(e => e.Contact2)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("contact2");
+            entity.Property(e => e.Contact3)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("contact3");
+            entity.Property(e => e.Contact4)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("contact4");
+            entity.Property(e => e.Contact5)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("contact5");
+            entity.Property(e => e.DecisionLevel)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("decision_level");
+            entity.Property(e => e.Description)
+                .HasMaxLength(500)
+                .IsUnicode(false)
+                .HasColumnName("description");
+            entity.Property(e => e.Email)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("email");
+            entity.Property(e => e.Email2)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("email2");
+            entity.Property(e => e.Email3)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("email3");
+            entity.Property(e => e.Email4)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("email4");
+            entity.Property(e => e.Email5)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("email5");
+            entity.Property(e => e.ExistingCad)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("existing_cad");
+            entity.Property(e => e.ExistingPlm)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("existing_plm");
+            entity.Property(e => e.IndustryCrm)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("industry_crm");
+            entity.Property(e => e.Name)
+                .HasMaxLength(50)
+                .HasColumnName("name");
+            entity.Property(e => e.TaxIdNo).HasColumnName("tax_id_no");
+            entity.Property(e => e.Telephone)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("telephone");
+            entity.Property(e => e.Telephone2)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("telephone2");
+            entity.Property(e => e.Telephone3)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("telephone3");
+            entity.Property(e => e.Telephone4)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("telephone4");
+            entity.Property(e => e.Telephone5)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("telephone5");
+        });
+
+        modelBuilder.Entity<Departments>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__departme__3213E83FE616106E");
+
+            entity.ToTable("departments");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.BookId).HasColumnName("book_id");
+            entity.Property(e => e.DeptName)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("dept_name");
+            entity.Property(e => e.Description)
+                .HasMaxLength(100)
+                .HasColumnName("description");
+            entity.Property(e => e.ManagerId).HasColumnName("manager_id");
+
+            entity.HasOne(d => d.Book).WithMany(p => p.Departments)
+                .HasForeignKey(d => d.BookId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_departments_set_of_books");
+
+            entity.HasOne(d => d.Manager).WithMany(p => p.Departments)
+                .HasForeignKey(d => d.ManagerId)
+                .HasConstraintName("FK_departments_login_info");
+        });
+
+        modelBuilder.Entity<ExpenseClaims>(entity =>
+        {
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.BookId).HasColumnName("book_id");
+            entity.Property(e => e.CategoryItem)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("category_item");
+            entity.Property(e => e.CategoryMain)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("category_main");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Description)
+                .HasMaxLength(500)
+                .HasColumnName("description");
+            entity.Property(e => e.ExpenseDate)
+                .HasColumnType("date")
+                .HasColumnName("expense_date");
+            entity.Property(e => e.ItemName)
+                .HasMaxLength(200)
+                .HasColumnName("item_name");
+            entity.Property(e => e.LocationFromTo)
+                .HasMaxLength(200)
+                .HasColumnName("location_from_to");
+            entity.Property(e => e.ManualAmount)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("manual_amount");
+            entity.Property(e => e.Mileage)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("mileage");
+            entity.Property(e => e.ParkingFee)
+                .HasDefaultValue(0m)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("parking_fee");
+            entity.Property(e => e.ProjectId).HasColumnName("project_id");
+            entity.Property(e => e.ProjectType)
+                .IsRequired()
+                .HasMaxLength(20)
+                .HasColumnName("project_type");
+            entity.Property(e => e.SubsidyUnitPrice)
+                .HasDefaultValue(7m)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("subsidy_unit_price");
+            entity.Property(e => e.TollFee)
+                .HasDefaultValue(0m)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("toll_fee");
+            entity.Property(e => e.TotalAmount)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("total_amount");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("updated_at");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.Book).WithMany(p => p.ExpenseClaims)
+                .HasForeignKey(d => d.BookId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ExpenseClaims_set_of_books");
+
+            entity.HasOne(d => d.User).WithMany(p => p.ExpenseClaims)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ExpenseClaims_login_info");
+        });
+
+        modelBuilder.Entity<LeaveApplications>(entity =>
+        {
+            entity.ToTable("Leave_applications");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasAnnotation("Relational:DefaultConstraintName", "DF_Leave_applications_created_at")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.DeptId).HasColumnName("dept_id");
+            entity.Property(e => e.EndTime)
+                .HasColumnType("datetime")
+                .HasColumnName("end_time");
+            entity.Property(e => e.LeaveType)
+                .IsRequired()
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("leave_type");
+            entity.Property(e => e.ManagerRemark)
+                .HasMaxLength(500)
+                .HasColumnName("manager_remark");
+            entity.Property(e => e.Reason)
+                .HasMaxLength(500)
+                .HasColumnName("reason");
+            entity.Property(e => e.StartTime)
+                .HasColumnType("datetime")
+                .HasColumnName("start_time");
+            entity.Property(e => e.Status)
+                .IsRequired()
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasDefaultValue("特休")
+                .HasAnnotation("Relational:DefaultConstraintName", "DF_Leave_applications_status")
+                .HasColumnName("status");
+            entity.Property(e => e.TotalHours)
+                .HasColumnType("decimal(5, 1)")
+                .HasColumnName("total_hours");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_at");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.Dept).WithMany(p => p.LeaveApplications)
+                .HasForeignKey(d => d.DeptId)
+                .HasConstraintName("FK_Leave_applications_departments");
+
+            entity.HasOne(d => d.User).WithMany(p => p.LeaveApplications)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Leave_applications_login_info");
+        });
+
+        modelBuilder.Entity<LoginInfo>(entity =>
+        {
+            entity.ToTable("login_info");
+
+            entity.HasIndex(e => e.Username, "IX_login_info").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.BookId).HasColumnName("book_id");
+            entity.Property(e => e.DeptId).HasColumnName("dept_id");
+            entity.Property(e => e.Description)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("description");
+            entity.Property(e => e.Disabled)
+                .HasAnnotation("Relational:DefaultConstraintName", "DF_login_info_disabled")
+                .HasColumnName("disabled");
+            entity.Property(e => e.JoinedDate)
+                .HasColumnType("date")
+                .HasColumnName("joined_date");
+            entity.Property(e => e.Password)
+                .IsRequired()
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("password");
+            entity.Property(e => e.Username)
+                .IsRequired()
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("username");
+
+            entity.HasOne(d => d.Book).WithMany(p => p.LoginInfo)
+                .HasForeignKey(d => d.BookId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_login_info_set_of_books");
+
+            entity.HasOne(d => d.Dept).WithMany(p => p.LoginInfo)
+                .HasForeignKey(d => d.DeptId)
+                .HasConstraintName("FK_login_info_departments");
+        });
+
+        modelBuilder.Entity<LoginInfoRoles>(entity =>
+        {
+            entity.ToTable("login_info_roles");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.InfoId).HasColumnName("info_id");
+            entity.Property(e => e.RoleId).HasColumnName("role_id");
+
+            entity.HasOne(d => d.Info).WithMany(p => p.LoginInfoRoles)
+                .HasForeignKey(d => d.InfoId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_login_info_roles_login_info");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.LoginInfoRoles)
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_login_info_roles_login_roles");
+        });
+
+        modelBuilder.Entity<LoginMenus>(entity =>
+        {
+            entity.ToTable("login_menus");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Description)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("description");
+            entity.Property(e => e.Icon)
+                .HasMaxLength(30)
+                .IsUnicode(false)
+                .HasColumnName("icon");
+            entity.Property(e => e.IsNode)
+                .HasDefaultValue(true)
+                .HasAnnotation("Relational:DefaultConstraintName", "DF_login_menus_isNode")
+                .HasColumnName("isNode");
+            entity.Property(e => e.MenuName)
+                .IsRequired()
+                .HasMaxLength(25)
+                .IsUnicode(false)
+                .HasColumnName("menu_name");
+            entity.Property(e => e.Parent).HasColumnName("parent");
+            entity.Property(e => e.SeqNo).HasColumnName("seq_no");
+            entity.Property(e => e.Url)
+                .IsRequired()
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("url");
+        });
+
+        modelBuilder.Entity<LoginRoles>(entity =>
+        {
+            entity.ToTable("login_roles");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.BookId).HasColumnName("book_id");
+            entity.Property(e => e.Description)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("description");
+            entity.Property(e => e.Disabled)
+                .HasAnnotation("Relational:DefaultConstraintName", "DF_login_roles_disabled")
+                .HasColumnName("disabled");
+            entity.Property(e => e.IsAdmin)
+                .HasAnnotation("Relational:DefaultConstraintName", "DF_login_roles_isAdmin")
+                .HasColumnName("isAdmin");
+            entity.Property(e => e.PermissionLevel)
+                .HasDefaultValue((byte)1)
+                .HasColumnName("permission_level");
+            entity.Property(e => e.RoleName)
+                .IsRequired()
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("role_name");
+
+            entity.HasOne(d => d.Book).WithMany(p => p.LoginRoles)
+                .HasForeignKey(d => d.BookId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_login_roles_set_of_books");
+        });
+
+        modelBuilder.Entity<LoginRolesMenus>(entity =>
+        {
+            entity.ToTable("login_roles_menus");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.MenuId).HasColumnName("menu_id");
+            entity.Property(e => e.RoleId).HasColumnName("role_id");
+
+            entity.HasOne(d => d.Menu).WithMany(p => p.LoginRolesMenus)
+                .HasForeignKey(d => d.MenuId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_login_roles_menus_login_menus");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.LoginRolesMenus)
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_login_roles_menus_login_roles");
+        });
+
+        modelBuilder.Entity<ProjectFirm>(entity =>
+        {
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.BookId).HasColumnName("book_id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasAnnotation("Relational:DefaultConstraintName", "DF_ProjectFirm_created_at")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Description)
+                .HasMaxLength(500)
+                .HasColumnName("description");
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(200)
+                .HasColumnName("name");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_at");
+
+            entity.HasOne(d => d.Book).WithMany(p => p.ProjectFirm)
+                .HasForeignKey(d => d.BookId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ProjectFirm_set_of_books");
+        });
+
+        modelBuilder.Entity<ProjectInternal>(entity =>
+        {
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.BookId).HasColumnName("book_id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasAnnotation("Relational:DefaultConstraintName", "DF_ProjectInternal_created_at")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Description)
+                .HasMaxLength(500)
+                .HasColumnName("description");
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(200)
+                .HasColumnName("name");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_at");
+
+            entity.HasOne(d => d.Book).WithMany(p => p.ProjectInternal)
+                .HasForeignKey(d => d.BookId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ProjectInternal_set_of_books");
+        });
+
+        modelBuilder.Entity<ProjectPlm>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__project__3213E83F836485AF");
+
+            entity.ToTable("ProjectPLM");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.AgsStatus)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("ags_status");
+            entity.Property(e => e.BookId).HasColumnName("book_id");
+            entity.Property(e => e.CloseDate)
+                .HasColumnType("date")
+                .HasColumnName("close_date");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasAnnotation("Relational:DefaultConstraintName", "DF__project__created__336AA144")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.CustomerId).HasColumnName("customer_id");
+            entity.Property(e => e.IsAgsBooking).HasColumnName("is_ags_booking");
+            entity.Property(e => e.IsSystemChecked).HasColumnName("is_system_checked");
+            entity.Property(e => e.Month).HasColumnName("month");
+            entity.Property(e => e.NetToDsAmount)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("net_to_ds_amount");
+            entity.Property(e => e.Quarter)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("quarter");
+            entity.Property(e => e.RfqToClientAmount)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("rfq_to_client_amount");
+            entity.Property(e => e.RoleId).HasColumnName("role_id");
+            entity.Property(e => e.SalesOwner).HasColumnName("sales_owner");
+            entity.Property(e => e.ServiceOwner).HasColumnName("service_owner");
+            entity.Property(e => e.SolutionMapping)
+                .HasMaxLength(300)
+                .IsUnicode(false)
+                .HasColumnName("solution_mapping");
+            entity.Property(e => e.SystemInquiryChannel)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("system_inquiry_channel");
+            entity.Property(e => e.UnderControlLongshotYearQ)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("under_control_longshot_year_q");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_at");
+            entity.Property(e => e.Year).HasColumnName("year");
+
+            entity.HasOne(d => d.Book).WithMany(p => p.ProjectPlm)
+                .HasForeignKey(d => d.BookId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ProjectPLM_set_of_books");
+
+            entity.HasOne(d => d.Customer).WithMany(p => p.ProjectPlm)
+                .HasForeignKey(d => d.CustomerId)
+                .HasConstraintName("FK_ProjectPLM_CustomerPLM");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.ProjectPlm)
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ProjectPLM_login_roles");
+        });
+
+        modelBuilder.Entity<ProjectSvc>(entity =>
+        {
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.AccessDate)
+                .HasColumnType("date")
+                .HasColumnName("access_date");
+            entity.Property(e => e.ActualDays)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("actual_days");
+            entity.Property(e => e.BookId).HasColumnName("book_id");
+            entity.Property(e => e.ContractAmount)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("contract_amount");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasAnnotation("Relational:DefaultConstraintName", "DF_ProjectSvc_created_at")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.DefineDate)
+                .HasColumnType("date")
+                .HasColumnName("define_date");
+            entity.Property(e => e.DesignDate)
+                .HasColumnType("date")
+                .HasColumnName("design_date");
+            entity.Property(e => e.GoLiveDate)
+                .HasColumnType("date")
+                .HasColumnName("go_live_date");
+            entity.Property(e => e.KickoffDate)
+                .HasColumnType("date")
+                .HasColumnName("kickoff_date");
+            entity.Property(e => e.MarginPercentage)
+                .HasColumnType("decimal(5, 2)")
+                .HasColumnName("margin_percentage");
+            entity.Property(e => e.PlannedDays)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("planned_days");
+            entity.Property(e => e.ProjectManagerId).HasColumnName("project_manager_id");
+            entity.Property(e => e.ProjectName)
+                .IsRequired()
+                .HasMaxLength(200)
+                .HasColumnName("project_name");
+            entity.Property(e => e.RolloutDate)
+                .HasColumnType("date")
+                .HasColumnName("rollout_date");
+            entity.Property(e => e.SowSignedDate)
+                .HasColumnType("date")
+                .HasColumnName("sow_signed_date");
+            entity.Property(e => e.UatDate)
+                .HasColumnType("date")
+                .HasColumnName("uat_date");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_at");
+
+            entity.HasOne(d => d.Book).WithMany(p => p.ProjectSvc)
+                .HasForeignKey(d => d.BookId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ProjectSvc_set_of_books");
+
+            entity.HasOne(d => d.ProjectManager).WithMany(p => p.ProjectSvc)
+                .HasForeignKey(d => d.ProjectManagerId)
+                .HasConstraintName("FK_ProjectSvc_PM");
+        });
+
+        modelBuilder.Entity<ProjectSvcTeam>(entity =>
+        {
+            entity.HasKey(e => new { e.ProjectSvcId, e.UserId });
+
+            entity.Property(e => e.ProjectSvcId).HasColumnName("project_svc_id");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+
+            entity.HasOne(d => d.ProjectSvc).WithMany(p => p.ProjectSvcTeam)
+                .HasForeignKey(d => d.ProjectSvcId)
+                .HasConstraintName("FK_ProjectSvcTeam_ProjectSvc");
+
+            entity.HasOne(d => d.User).WithMany(p => p.ProjectSvcTeam)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ProjectSvcTeam_login_info");
+        });
+
+        modelBuilder.Entity<SetOfBooks>(entity =>
+        {
+            entity.HasKey(e => e.BookId);
+
+            entity.ToTable("set_of_books");
+
+            entity.Property(e => e.BookId)
+                .ValueGeneratedNever()
+                .HasColumnName("book_id");
+            entity.Property(e => e.Description)
+                .HasMaxLength(250)
+                .IsUnicode(false)
+                .HasColumnName("description");
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<TaskMaster>(entity =>
+        {
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.BookId).HasColumnName("book_id");
+            entity.Property(e => e.Category)
+                .IsRequired()
+                .HasMaxLength(20)
+                .HasColumnName("category");
+            entity.Property(e => e.CloseDate)
+                .HasColumnType("date")
+                .HasColumnName("close_date");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasAnnotation("Relational:DefaultConstraintName", "DF_TaskMaster_created_at")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.Priority)
+                .IsRequired()
+                .HasMaxLength(20)
+                .HasColumnName("priority");
+            entity.Property(e => e.Status)
+                .IsRequired()
+                .HasMaxLength(20)
+                .HasColumnName("status");
+            entity.Property(e => e.TaskName)
+                .IsRequired()
+                .HasMaxLength(200)
+                .HasColumnName("task_name");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_at");
+
+            entity.HasOne(d => d.Book).WithMany(p => p.TaskMaster)
+                .HasForeignKey(d => d.BookId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TaskMaster_set_of_books");
+        });
+
+        modelBuilder.Entity<WeeklyReportPlm>(entity =>
+        {
+            entity.ToTable("WeeklyReportPLM");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.AgsStatus)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("ags_status");
+            entity.Property(e => e.Content).HasColumnName("content");
+            entity.Property(e => e.ContentDetail).HasColumnName("content_detail");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasAnnotation("Relational:DefaultConstraintName", "DF__WeeklyRep__creat__6FE99F9F")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.ProjectId).HasColumnName("project_id");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_at");
+            entity.Property(e => e.Week).HasColumnName("week");
+            entity.Property(e => e.Year).HasColumnName("year");
+
+            entity.HasOne(d => d.Project).WithMany(p => p.WeeklyReportPlm)
+                .HasForeignKey(d => d.ProjectId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_WeeklyReport_Project");
+        });
+
+        OnModelCreatingPartial(modelBuilder);
+    }
+
+    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

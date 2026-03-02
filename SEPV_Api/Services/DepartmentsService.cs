@@ -28,6 +28,7 @@ namespace Gp_Api.Services
         public string Description { get; set; }
         public int? Manager_id { get; set; }      // 部門主管 ID
         public string Manager_name { get; set; }  // 關聯顯示用：主管姓名
+        public string Company_name { get; set; }
     }
 
     public class DepartmentsService : IDepartmentsService
@@ -59,17 +60,18 @@ namespace Gp_Api.Services
                     Dept_name = t.DeptName,
                     Description = t.Description,
                     Manager_id = t.ManagerId,
+                    Company_name = t.Book.Name,
                     Manager_name = _PMSContext.LoginInfo
                         .Where(u => u.Id == t.ManagerId)
                         .Select(u => u.Username)
                         .FirstOrDefault() ?? "未指定"
                 });
-               
-            //if (check != null && !check.IsAdmin)
-            //{
-            //    BookId = check.BookId;
-            //    query = query.Where(a => a.Book_id == BookId);
-            //}
+
+            if (check != null && !check.IsAdmin)
+            {
+                BookId = check.BookId;
+                query = query.Where(a => a.Book_id == BookId);
+            }
 
             return query.ToList();
         }
@@ -82,6 +84,7 @@ namespace Gp_Api.Services
                 {
                     Id = t.Id,
                     Book_id=t.BookId,
+                    Company_name = t.Book.Name,
                     Dept_name = t.DeptName,
                     Description = t.Description,
                     Manager_id = t.ManagerId
@@ -93,7 +96,7 @@ namespace Gp_Api.Services
         {
             var data = new Departments
             {
-                BookId =BookId,
+                BookId =viewModel.Book_id,
                 DeptName = viewModel.Dept_name,
                 Description = viewModel.Description,
                 ManagerId = viewModel.Manager_id
@@ -107,7 +110,7 @@ namespace Gp_Api.Services
         {
             var data = _PMSContext.Departments.FirstOrDefault(t => t.Id == id);
             if (data == null) return "NotFound";
-
+            data.BookId = viewModel.Book_id;
             data.DeptName = viewModel.Dept_name;
             data.Description = viewModel.Description;
             data.ManagerId = viewModel.Manager_id;

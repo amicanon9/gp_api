@@ -3,18 +3,13 @@
 using System;
 using System.Collections.Generic;
 
-namespace SEPV_Api.Models.PMS
+namespace SEPV_Api.Models.PMS;
+
+public partial class CodeLookupSource
 {
-    public partial class CodeLookupSource
-    {
-        public CodeLookupSource()
-        {
-            CodeLookup = new HashSet<CodeLookup>();
-        }
+    public string SourceTable { get; set; }
 
-        public string SourceTable { get; set; }
-        public string Description { get; set; }
+    public string Description { get; set; }
 
-        public virtual ICollection<CodeLookup> CodeLookup { get; set; }
-    }
+    public virtual ICollection<CodeLookup> CodeLookup { get; set; } = new List<CodeLookup>();
 }

@@ -3,35 +3,33 @@
 using System;
 using System.Collections.Generic;
 
-namespace SEPV_Api.Models.PMS
+namespace SEPV_Api.Models.PMS;
+
+public partial class SetOfBooks
 {
-    public partial class SetOfBooks
-    {
-        public SetOfBooks()
-        {
-            CheckinLogs = new HashSet<CheckinLogs>();
-            Departments = new HashSet<Departments>();
-            ExpenseClaims = new HashSet<ExpenseClaims>();
-            LoginInfo = new HashSet<LoginInfo>();
-            LoginRoles = new HashSet<LoginRoles>();
-            ProjectInternal = new HashSet<ProjectInternal>();
-            ProjectPlm = new HashSet<ProjectPlm>();
-            ProjectSvc = new HashSet<ProjectSvc>();
-            TaskMaster = new HashSet<TaskMaster>();
-        }
+    public short BookId { get; set; }
 
-        public short BookId { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
+    public string Name { get; set; }
 
-        public virtual ICollection<CheckinLogs> CheckinLogs { get; set; }
-        public virtual ICollection<Departments> Departments { get; set; }
-        public virtual ICollection<ExpenseClaims> ExpenseClaims { get; set; }
-        public virtual ICollection<LoginInfo> LoginInfo { get; set; }
-        public virtual ICollection<LoginRoles> LoginRoles { get; set; }
-        public virtual ICollection<ProjectInternal> ProjectInternal { get; set; }
-        public virtual ICollection<ProjectPlm> ProjectPlm { get; set; }
-        public virtual ICollection<ProjectSvc> ProjectSvc { get; set; }
-        public virtual ICollection<TaskMaster> TaskMaster { get; set; }
-    }
+    public string Description { get; set; }
+
+    public virtual ICollection<CheckinLogs> CheckinLogs { get; set; } = new List<CheckinLogs>();
+
+    public virtual ICollection<Departments> Departments { get; set; } = new List<Departments>();
+
+    public virtual ICollection<ExpenseClaims> ExpenseClaims { get; set; } = new List<ExpenseClaims>();
+
+    public virtual ICollection<LoginInfo> LoginInfo { get; set; } = new List<LoginInfo>();
+
+    public virtual ICollection<LoginRoles> LoginRoles { get; set; } = new List<LoginRoles>();
+
+    public virtual ICollection<ProjectFirm> ProjectFirm { get; set; } = new List<ProjectFirm>();
+
+    public virtual ICollection<ProjectInternal> ProjectInternal { get; set; } = new List<ProjectInternal>();
+
+    public virtual ICollection<ProjectPlm> ProjectPlm { get; set; } = new List<ProjectPlm>();
+
+    public virtual ICollection<ProjectSvc> ProjectSvc { get; set; } = new List<ProjectSvc>();
+
+    public virtual ICollection<TaskMaster> TaskMaster { get; set; } = new List<TaskMaster>();
 }

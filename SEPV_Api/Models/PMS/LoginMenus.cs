@@ -3,24 +3,25 @@
 using System;
 using System.Collections.Generic;
 
-namespace SEPV_Api.Models.PMS
+namespace SEPV_Api.Models.PMS;
+
+public partial class LoginMenus
 {
-    public partial class LoginMenus
-    {
-        public LoginMenus()
-        {
-            LoginRolesMenus = new HashSet<LoginRolesMenus>();
-        }
+    public int Id { get; set; }
 
-        public int Id { get; set; }
-        public string MenuName { get; set; }
-        public string Description { get; set; }
-        public string Url { get; set; }
-        public int? Parent { get; set; }
-        public short SeqNo { get; set; }
-        public bool? IsNode { get; set; }
-        public string Icon { get; set; }
+    public string MenuName { get; set; }
 
-        public virtual ICollection<LoginRolesMenus> LoginRolesMenus { get; set; }
-    }
+    public string Description { get; set; }
+
+    public string Url { get; set; }
+
+    public int? Parent { get; set; }
+
+    public short SeqNo { get; set; }
+
+    public bool IsNode { get; set; }
+
+    public string Icon { get; set; }
+
+    public virtual ICollection<LoginRolesMenus> LoginRolesMenus { get; set; } = new List<LoginRolesMenus>();
 }

@@ -3,17 +3,21 @@
 using System;
 using System.Collections.Generic;
 
-namespace SEPV_Api.Models.PMS
-{
-    public partial class ProjectInternal
-    {
-        public int Id { get; set; }
-        public short BookId { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public DateTime? CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+namespace SEPV_Api.Models.PMS;
 
-        public virtual SetOfBooks Book { get; set; }
-    }
+public partial class ProjectInternal
+{
+    public int Id { get; set; }
+
+    public short BookId { get; set; }
+
+    public string Name { get; set; }
+
+    public string Description { get; set; }
+
+    public DateTime? CreatedAt { get; set; }
+
+    public DateTime? UpdatedAt { get; set; }
+
+    public virtual SetOfBooks Book { get; set; }
 }

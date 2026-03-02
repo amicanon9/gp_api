@@ -3,15 +3,17 @@
 using System;
 using System.Collections.Generic;
 
-namespace SEPV_Api.Models.PMS
-{
-    public partial class LoginRolesMenus
-    {
-        public int Id { get; set; }
-        public int RoleId { get; set; }
-        public int MenuId { get; set; }
+namespace SEPV_Api.Models.PMS;
 
-        public virtual LoginMenus Menu { get; set; }
-        public virtual LoginRoles Role { get; set; }
-    }
+public partial class LoginRolesMenus
+{
+    public int Id { get; set; }
+
+    public int RoleId { get; set; }
+
+    public int MenuId { get; set; }
+
+    public virtual LoginMenus Menu { get; set; }
+
+    public virtual LoginRoles Role { get; set; }
 }

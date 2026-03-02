@@ -3,35 +3,39 @@
 using System;
 using System.Collections.Generic;
 
-namespace SEPV_Api.Models.PMS
+namespace SEPV_Api.Models.PMS;
+
+public partial class LoginInfo
 {
-    public partial class LoginInfo
-    {
-        public LoginInfo()
-        {
-            Departments = new HashSet<Departments>();
-            ExpenseClaims = new HashSet<ExpenseClaims>();
-            LeaveApplications = new HashSet<LeaveApplications>();
-            LoginInfoRoles = new HashSet<LoginInfoRoles>();
-            ProjectSvc = new HashSet<ProjectSvc>();
-            ProjectSvcTeam = new HashSet<ProjectSvcTeam>();
-        }
+    public int Id { get; set; }
 
-        public int Id { get; set; }
-        public short BookId { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string Description { get; set; }
-        public bool Disabled { get; set; }
-        public DateTime? JoinedDate { get; set; }
-        public int? DeptId { get; set; }
+    public short BookId { get; set; }
 
-        public virtual SetOfBooks Book { get; set; }
-        public virtual ICollection<Departments> Departments { get; set; }
-        public virtual ICollection<ExpenseClaims> ExpenseClaims { get; set; }
-        public virtual ICollection<LeaveApplications> LeaveApplications { get; set; }
-        public virtual ICollection<LoginInfoRoles> LoginInfoRoles { get; set; }
-        public virtual ICollection<ProjectSvc> ProjectSvc { get; set; }
-        public virtual ICollection<ProjectSvcTeam> ProjectSvcTeam { get; set; }
-    }
+    public string Username { get; set; }
+
+    public string Password { get; set; }
+
+    public string Description { get; set; }
+
+    public bool Disabled { get; set; }
+
+    public DateTime? JoinedDate { get; set; }
+
+    public int? DeptId { get; set; }
+
+    public virtual SetOfBooks Book { get; set; }
+
+    public virtual ICollection<Departments> Departments { get; set; } = new List<Departments>();
+
+    public virtual Departments Dept { get; set; }
+
+    public virtual ICollection<ExpenseClaims> ExpenseClaims { get; set; } = new List<ExpenseClaims>();
+
+    public virtual ICollection<LeaveApplications> LeaveApplications { get; set; } = new List<LeaveApplications>();
+
+    public virtual ICollection<LoginInfoRoles> LoginInfoRoles { get; set; } = new List<LoginInfoRoles>();
+
+    public virtual ICollection<ProjectSvc> ProjectSvc { get; set; } = new List<ProjectSvc>();
+
+    public virtual ICollection<ProjectSvcTeam> ProjectSvcTeam { get; set; } = new List<ProjectSvcTeam>();
 }

@@ -3,22 +3,31 @@
 using System;
 using System.Collections.Generic;
 
-namespace SEPV_Api.Models.PMS
-{
-    public partial class CheckinLogs
-    {
-        public int Id { get; set; }
-        public int UserId { get; set; }
-        public short BookId { get; set; }
-        public int? ProjectId { get; set; }
-        public DateTime? FakeTime { get; set; }
-        public DateTime CheckinTime { get; set; }
-        public string Mode { get; set; }
-        public string Status { get; set; }
-        public DateTime? CreatedAt { get; set; }
-        public int? WorkPercentage { get; set; }
-        public string Type { get; set; }
+namespace SEPV_Api.Models.PMS;
 
-        public virtual SetOfBooks Book { get; set; }
-    }
+public partial class CheckinLogs
+{
+    public int Id { get; set; }
+
+    public int UserId { get; set; }
+
+    public short BookId { get; set; }
+
+    public int? ProjectId { get; set; }
+
+    public DateTime CheckinTime { get; set; }
+
+    public string Mode { get; set; }
+
+    public string Status { get; set; }
+
+    public DateTime? CreatedAt { get; set; }
+
+    public DateTime? FakeTime { get; set; }
+
+    public int? WorkPercentage { get; set; }
+
+    public string Type { get; set; }
+
+    public virtual SetOfBooks Book { get; set; }
 }

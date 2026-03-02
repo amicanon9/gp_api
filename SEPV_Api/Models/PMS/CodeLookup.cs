@@ -3,14 +3,15 @@
 using System;
 using System.Collections.Generic;
 
-namespace SEPV_Api.Models.PMS
-{
-    public partial class CodeLookup
-    {
-        public string SourceTable { get; set; }
-        public string Code { get; set; }
-        public string Description { get; set; }
+namespace SEPV_Api.Models.PMS;
 
-        public virtual CodeLookupSource SourceTableNavigation { get; set; }
-    }
+public partial class CodeLookup
+{
+    public string SourceTable { get; set; }
+
+    public string Code { get; set; }
+
+    public string Description { get; set; }
+
+    public virtual CodeLookupSource SourceTableNavigation { get; set; }
 }

@@ -3,31 +3,49 @@
 using System;
 using System.Collections.Generic;
 
-namespace SEPV_Api.Models.PMS
-{
-    public partial class ExpenseClaims
-    {
-        public int Id { get; set; }
-        public int UserId { get; set; }
-        public short BookId { get; set; }
-        public string ProjectType { get; set; }
-        public int ProjectId { get; set; }
-        public string CategoryMain { get; set; }
-        public string CategoryItem { get; set; }
-        public DateTime ExpenseDate { get; set; }
-        public string ItemName { get; set; }
-        public string Description { get; set; }
-        public string LocationFromTo { get; set; }
-        public decimal? Mileage { get; set; }
-        public decimal? SubsidyUnitPrice { get; set; }
-        public decimal? TollFee { get; set; }
-        public decimal? ParkingFee { get; set; }
-        public decimal? ManualAmount { get; set; }
-        public decimal TotalAmount { get; set; }
-        public DateTime? CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+namespace SEPV_Api.Models.PMS;
 
-        public virtual SetOfBooks Book { get; set; }
-        public virtual LoginInfo User { get; set; }
-    }
+public partial class ExpenseClaims
+{
+    public int Id { get; set; }
+
+    public int UserId { get; set; }
+
+    public short BookId { get; set; }
+
+    public string ProjectType { get; set; }
+
+    public int ProjectId { get; set; }
+
+    public string CategoryMain { get; set; }
+
+    public string CategoryItem { get; set; }
+
+    public DateTime ExpenseDate { get; set; }
+
+    public string ItemName { get; set; }
+
+    public string Description { get; set; }
+
+    public string LocationFromTo { get; set; }
+
+    public decimal? Mileage { get; set; }
+
+    public decimal? SubsidyUnitPrice { get; set; }
+
+    public decimal? TollFee { get; set; }
+
+    public decimal? ParkingFee { get; set; }
+
+    public decimal? ManualAmount { get; set; }
+
+    public decimal TotalAmount { get; set; }
+
+    public DateTime? CreatedAt { get; set; }
+
+    public DateTime? UpdatedAt { get; set; }
+
+    public virtual SetOfBooks Book { get; set; }
+
+    public virtual LoginInfo User { get; set; }
 }

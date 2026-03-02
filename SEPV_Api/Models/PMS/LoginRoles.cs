@@ -3,28 +3,29 @@
 using System;
 using System.Collections.Generic;
 
-namespace SEPV_Api.Models.PMS
+namespace SEPV_Api.Models.PMS;
+
+public partial class LoginRoles
 {
-    public partial class LoginRoles
-    {
-        public LoginRoles()
-        {
-            LoginInfoRoles = new HashSet<LoginInfoRoles>();
-            LoginRolesMenus = new HashSet<LoginRolesMenus>();
-            ProjectPlm = new HashSet<ProjectPlm>();
-        }
+    public int Id { get; set; }
 
-        public int Id { get; set; }
-        public string RoleName { get; set; }
-        public string Description { get; set; }
-        public bool Disabled { get; set; }
-        public short BookId { get; set; }
-        public bool IsAdmin { get; set; }
-        public byte PermissionLevel { get; set; }
+    public string RoleName { get; set; }
 
-        public virtual SetOfBooks Book { get; set; }
-        public virtual ICollection<LoginInfoRoles> LoginInfoRoles { get; set; }
-        public virtual ICollection<LoginRolesMenus> LoginRolesMenus { get; set; }
-        public virtual ICollection<ProjectPlm> ProjectPlm { get; set; }
-    }
+    public string Description { get; set; }
+
+    public bool Disabled { get; set; }
+
+    public short BookId { get; set; }
+
+    public bool IsAdmin { get; set; }
+
+    public byte PermissionLevel { get; set; }
+
+    public virtual SetOfBooks Book { get; set; }
+
+    public virtual ICollection<LoginInfoRoles> LoginInfoRoles { get; set; } = new List<LoginInfoRoles>();
+
+    public virtual ICollection<LoginRolesMenus> LoginRolesMenus { get; set; } = new List<LoginRolesMenus>();
+
+    public virtual ICollection<ProjectPlm> ProjectPlm { get; set; } = new List<ProjectPlm>();
 }

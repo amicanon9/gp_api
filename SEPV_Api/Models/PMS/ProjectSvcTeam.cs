@@ -3,15 +3,17 @@
 using System;
 using System.Collections.Generic;
 
-namespace SEPV_Api.Models.PMS
-{
-    public partial class ProjectSvcTeam
-    {
-        public int ProjectSvcId { get; set; }
-        public int UserId { get; set; }
-        public DateTime? CreatedAt { get; set; }
+namespace SEPV_Api.Models.PMS;
 
-        public virtual ProjectSvc ProjectSvc { get; set; }
-        public virtual LoginInfo User { get; set; }
-    }
+public partial class ProjectSvcTeam
+{
+    public int ProjectSvcId { get; set; }
+
+    public int UserId { get; set; }
+
+    public DateTime? CreatedAt { get; set; }
+
+    public virtual ProjectSvc ProjectSvc { get; set; }
+
+    public virtual LoginInfo User { get; set; }
 }

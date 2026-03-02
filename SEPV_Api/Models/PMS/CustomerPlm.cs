@@ -3,39 +3,55 @@
 using System;
 using System.Collections.Generic;
 
-namespace SEPV_Api.Models.PMS
+namespace SEPV_Api.Models.PMS;
+
+public partial class CustomerPlm
 {
-    public partial class CustomerPlm
-    {
-        public CustomerPlm()
-        {
-            ProjectPlm = new HashSet<ProjectPlm>();
-        }
+    public int Id { get; set; }
 
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int? TaxIdNo { get; set; }
-        public string Contact { get; set; }
-        public string Telephone { get; set; }
-        public string Contact2 { get; set; }
-        public string Telephone2 { get; set; }
-        public string Contact3 { get; set; }
-        public string Telephone3 { get; set; }
-        public string Contact4 { get; set; }
-        public string Telephone4 { get; set; }
-        public string Contact5 { get; set; }
-        public string Telephone5 { get; set; }
-        public string DecisionLevel { get; set; }
-        public string Description { get; set; }
-        public string IndustryCrm { get; set; }
-        public string ExistingPlm { get; set; }
-        public string ExistingCad { get; set; }
-        public string Email { get; set; }
-        public string Email2 { get; set; }
-        public string Email3 { get; set; }
-        public string Email4 { get; set; }
-        public string Email5 { get; set; }
+    public string Name { get; set; }
 
-        public virtual ICollection<ProjectPlm> ProjectPlm { get; set; }
-    }
+    public int? TaxIdNo { get; set; }
+
+    public string Contact { get; set; }
+
+    public string Telephone { get; set; }
+
+    public string Contact2 { get; set; }
+
+    public string Telephone2 { get; set; }
+
+    public string Contact3 { get; set; }
+
+    public string Telephone3 { get; set; }
+
+    public string Contact4 { get; set; }
+
+    public string Telephone4 { get; set; }
+
+    public string Contact5 { get; set; }
+
+    public string Telephone5 { get; set; }
+
+    public string DecisionLevel { get; set; }
+
+    public string Description { get; set; }
+
+    public string IndustryCrm { get; set; }
+
+    public string ExistingPlm { get; set; }
+
+    public string ExistingCad { get; set; }
+
+    public string Email { get; set; }
+
+    public string Email2 { get; set; }
+
+    public string Email3 { get; set; }
+
+    public string Email4 { get; set; }
+
+    public string Email5 { get; set; }
+
+    public virtual ICollection<ProjectPlm> ProjectPlm { get; set; } = new List<ProjectPlm>();
 }

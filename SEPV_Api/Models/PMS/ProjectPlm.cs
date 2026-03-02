@@ -3,39 +3,55 @@
 using System;
 using System.Collections.Generic;
 
-namespace SEPV_Api.Models.PMS
+namespace SEPV_Api.Models.PMS;
+
+public partial class ProjectPlm
 {
-    public partial class ProjectPlm
-    {
-        public ProjectPlm()
-        {
-            WeeklyReportPlm = new HashSet<WeeklyReportPlm>();
-        }
+    public int Id { get; set; }
 
-        public int Id { get; set; }
-        public int RoleId { get; set; }
-        public short BookId { get; set; }
-        public int? Year { get; set; }
-        public string Quarter { get; set; }
-        public int? Month { get; set; }
-        public DateTime? CloseDate { get; set; }
-        public decimal? RfqToClientAmount { get; set; }
-        public decimal? NetToDsAmount { get; set; }
-        public string SystemInquiryChannel { get; set; }
-        public bool? IsSystemChecked { get; set; }
-        public bool? IsAgsBooking { get; set; }
-        public int? CustomerId { get; set; }
-        public string AgsStatus { get; set; }
-        public string UnderControlLongshotYearQ { get; set; }
-        public string SolutionMapping { get; set; }
-        public int? SalesOwner { get; set; }
-        public int? ServiceOwner { get; set; }
-        public DateTime? CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+    public int RoleId { get; set; }
 
-        public virtual SetOfBooks Book { get; set; }
-        public virtual CustomerPlm Customer { get; set; }
-        public virtual LoginRoles Role { get; set; }
-        public virtual ICollection<WeeklyReportPlm> WeeklyReportPlm { get; set; }
-    }
+    public short BookId { get; set; }
+
+    public int? Year { get; set; }
+
+    public string Quarter { get; set; }
+
+    public int? Month { get; set; }
+
+    public DateTime? CloseDate { get; set; }
+
+    public decimal? RfqToClientAmount { get; set; }
+
+    public decimal? NetToDsAmount { get; set; }
+
+    public string SystemInquiryChannel { get; set; }
+
+    public bool? IsSystemChecked { get; set; }
+
+    public bool? IsAgsBooking { get; set; }
+
+    public int? CustomerId { get; set; }
+
+    public string AgsStatus { get; set; }
+
+    public string UnderControlLongshotYearQ { get; set; }
+
+    public string SolutionMapping { get; set; }
+
+    public int? SalesOwner { get; set; }
+
+    public int? ServiceOwner { get; set; }
+
+    public DateTime? CreatedAt { get; set; }
+
+    public DateTime? UpdatedAt { get; set; }
+
+    public virtual SetOfBooks Book { get; set; }
+
+    public virtual CustomerPlm Customer { get; set; }
+
+    public virtual LoginRoles Role { get; set; }
+
+    public virtual ICollection<WeeklyReportPlm> WeeklyReportPlm { get; set; } = new List<WeeklyReportPlm>();
 }

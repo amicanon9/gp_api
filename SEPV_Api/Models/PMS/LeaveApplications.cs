@@ -3,24 +3,35 @@
 using System;
 using System.Collections.Generic;
 
-namespace SEPV_Api.Models.PMS
-{
-    public partial class LeaveApplications
-    {
-        public int Id { get; set; }
-        public int UserId { get; set; }
-        public string LeaveType { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
-        public decimal? TotalHours { get; set; }
-        public string Reason { get; set; }
-        public string Status { get; set; }
-        public string ManagerRemark { get; set; }
-        public DateTime? CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
-        public int? DeptId { get; set; }
+namespace SEPV_Api.Models.PMS;
 
-        public virtual Departments Dept { get; set; }
-        public virtual LoginInfo User { get; set; }
-    }
+public partial class LeaveApplications
+{
+    public int Id { get; set; }
+
+    public int UserId { get; set; }
+
+    public string LeaveType { get; set; }
+
+    public DateTime StartTime { get; set; }
+
+    public DateTime EndTime { get; set; }
+
+    public decimal? TotalHours { get; set; }
+
+    public string Reason { get; set; }
+
+    public string Status { get; set; }
+
+    public string ManagerRemark { get; set; }
+
+    public DateTime? CreatedAt { get; set; }
+
+    public DateTime? UpdatedAt { get; set; }
+
+    public int? DeptId { get; set; }
+
+    public virtual Departments Dept { get; set; }
+
+    public virtual LoginInfo User { get; set; }
 }
