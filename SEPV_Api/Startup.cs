@@ -66,6 +66,7 @@ namespace SEPV_Api
             services.AddTransient<ITaskMasterService, TaskMasterService>();
             services.AddTransient<IFileProcessorService, FileProcessorService>();
             services.AddTransient<IExpenseClaimsService, ExpenseClaimsService>();
+            services.AddTransient<IProjectFirmService, ProjectFirmService>();
             // services.AddScoped
 
             services.AddDbContext<PMSContext>(option => option.UseSqlServer(Configuration.GetConnectionString(nameof(PMSContext))));

@@ -65,7 +65,7 @@ namespace Gp_Api.Services
 
         public List<CheckinLogsView> GetDataById(int id)
         {
-            DateTime oneMonthAgo = DateTime.Now.AddMonths(-1);
+            DateTime oneMonthAgo = DateTime.Now.AddMonths(-2);
 
             return _PMSContext.CheckinLogs
                 .Where(t => t.UserId == UserId && t.BookId == BookId && t.CheckinTime >= oneMonthAgo)

@@ -27,7 +27,7 @@ namespace Gp_Api.Controllers
                 return BadRequest("請提供報表名稱（reportName）。");
 
             //string reportServerUrl = "http://10.1.3.16/ReportServer";
-            string reportServerUrl = "http://aserver01/ReportServer";
+            string reportServerUrl = "http://win-926c94k1sqh/ReportServer";
             string username = "demo";
             string password = "Abcd1234!!";
             string domain = "";
