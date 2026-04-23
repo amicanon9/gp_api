@@ -47,6 +47,12 @@ public partial class ProjectPlm
 
     public DateTime? UpdatedAt { get; set; }
 
+    public DateTime? LongshotDate { get; set; }
+
+    public DateTime? BcdDate { get; set; }
+
+    public DateTime? CommitDate { get; set; }
+
     public virtual SetOfBooks Book { get; set; }
 
     public virtual CustomerPlm Customer { get; set; }

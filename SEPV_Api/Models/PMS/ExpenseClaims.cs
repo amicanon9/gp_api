@@ -45,6 +45,8 @@ public partial class ExpenseClaims
 
     public DateTime? UpdatedAt { get; set; }
 
+    public string Transportation { get; set; }
+
     public virtual SetOfBooks Book { get; set; }
 
     public virtual LoginInfo User { get; set; }

@@ -303,6 +303,9 @@ public partial class PMSContext : DbContext
             entity.Property(e => e.TotalAmount)
                 .HasColumnType("decimal(18, 2)")
                 .HasColumnName("total_amount");
+            entity.Property(e => e.Transportation)
+                .HasMaxLength(50)
+                .HasColumnName("transportation");
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
@@ -576,10 +579,16 @@ public partial class PMSContext : DbContext
                 .HasMaxLength(20)
                 .IsUnicode(false)
                 .HasColumnName("ags_status");
+            entity.Property(e => e.BcdDate)
+                .HasColumnType("datetime")
+                .HasColumnName("bcd_date");
             entity.Property(e => e.BookId).HasColumnName("book_id");
             entity.Property(e => e.CloseDate)
                 .HasColumnType("date")
                 .HasColumnName("close_date");
+            entity.Property(e => e.CommitDate)
+                .HasColumnType("datetime")
+                .HasColumnName("commit_date");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasAnnotation("Relational:DefaultConstraintName", "DF__project__created__336AA144")
@@ -588,6 +597,9 @@ public partial class PMSContext : DbContext
             entity.Property(e => e.CustomerId).HasColumnName("customer_id");
             entity.Property(e => e.IsAgsBooking).HasColumnName("is_ags_booking");
             entity.Property(e => e.IsSystemChecked).HasColumnName("is_system_checked");
+            entity.Property(e => e.LongshotDate)
+                .HasColumnType("datetime")
+                .HasColumnName("longshot_date");
             entity.Property(e => e.Month).HasColumnName("month");
             entity.Property(e => e.NetToDsAmount)
                 .HasColumnType("decimal(18, 2)")

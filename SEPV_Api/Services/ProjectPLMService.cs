@@ -1,7 +1,7 @@
 ﻿using Gp_Api.IServices;
 using Gp_Api.Models.ViewModels;
-using Microsoft.EntityFrameworkCore; // 確保有引用此項以支援 Include
-using SEPV_Api.Models.PMS; // 假設這是你的 Entity Framework Models 命名空間
+using Microsoft.EntityFrameworkCore;
+using SEPV_Api.Models.PMS;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,16 +35,21 @@ namespace Gp_Api.Services
         public string system_inquiry_channel { get; set; }
         public bool? is_system_checked { get; set; }
         public bool? is_ags_booking { get; set; }
-      
+
         public string ags_status { get; set; }
         public string under_control_longshot_year_q { get; set; }
         public string solution_mapping { get; set; }
         public int? sales_owner { get; set; }
         public int? service_owner { get; set; }
 
+        // 新增：可手動編輯的三個日期欄位
+        public DateTime? longshot_date { get; set; }
+        public DateTime? bcd_date { get; set; }
+        public DateTime? commit_date { get; set; }
+
         // Customer 關聯資訊
         public int? customer_id { get; set; }
-        public string customer_name { get; set; } // 來自 CustomerPLM
+        public string customer_name { get; set; }
     }
 
     public class ProjectPlmService : IProjectPlmService
@@ -78,42 +83,41 @@ namespace Gp_Api.Services
                 is_system_checked = t.IsSystemChecked,
                 is_ags_booking = t.IsAgsBooking,
                 customer_id = t.CustomerId,
-              
                 ags_status = t.AgsStatus,
+
+                // 讀取日期欄位
+                longshot_date = t.LongshotDate,
+                bcd_date = t.BcdDate,
+                commit_date = t.CommitDate,
+
                 under_control_longshot_year_q = t.UnderControlLongshotYearQ,
                 solution_mapping = t.SolutionMapping,
                 sales_owner = t.SalesOwner,
                 service_owner = t.ServiceOwner,
-
-                // 帶入客戶資訊
                 customer_name = t.Customer != null ? t.Customer.Name : "",
             });
 
-            if (!check.IsAdmin)
+            if (check != null && !check.IsAdmin)
             {
-                query = query.Where(a => a.role_id == RoleId && a.book_id== BookId);
+                query = query.Where(a => a.role_id == RoleId && a.book_id == BookId);
             }
-            var allData = query.ToList();
-            return allData;
+            return query.ToList();
         }
+
         public List<ProjectPlmView> GetAllDataByAllRoles()
         {
-            // 1. 取得該使用者目前選定的角色資訊（判斷是否為 Admin）
             var check = _PMSContext.LoginInfoRoles.Where(a => a.RoleId == RoleId).Select(b => b.Role).FirstOrDefault();
-
-            // 2. 取得該 User 擁有的所有 RoleId 清單
-            // 這樣可以拿到 user_id 底下所有符合的角色專案
             var userRoleIds = _PMSContext.LoginInfoRoles
-                .Where(a => a.InfoId == UserId) // 假設你的 LoginInfoId 就是 UserId
+                .Where(a => a.InfoId == UserId)
                 .Select(a => a.RoleId)
                 .ToList();
 
-            // 3. 建立基礎查詢
             var query = _PMSContext.ProjectPlm.AsQueryable();
-            if (!check.IsAdmin)
+            if (check != null && !check.IsAdmin)
             {
-                query = query.Where(a => userRoleIds.Contains(a.RoleId) &&  a.BookId==BookId);
+                query = query.Where(a => userRoleIds.Contains(a.RoleId) && a.BookId == BookId);
             }
+
             return query.Select(t => new ProjectPlmView
             {
                 id = t.Id,
@@ -130,21 +134,26 @@ namespace Gp_Api.Services
                 is_ags_booking = t.IsAgsBooking,
                 customer_id = t.CustomerId,
                 ags_status = t.AgsStatus,
+
+                // 讀取日期欄位
+                longshot_date = t.LongshotDate,
+                bcd_date = t.BcdDate,
+                commit_date = t.CommitDate,
+
                 under_control_longshot_year_q = t.UnderControlLongshotYearQ,
                 solution_mapping = t.SolutionMapping,
                 sales_owner = t.SalesOwner,
                 service_owner = t.ServiceOwner,
-                // 帶入客戶資訊
                 customer_name = t.Customer != null ? t.Customer.Name : ""
-            })
-            .ToList();
+            }).ToList();
         }
+
         public void InsertData(ProjectPlmView viewModel)
         {
             var data = new ProjectPlm
             {
-                RoleId=RoleId,
-                BookId=BookId,
+                RoleId = RoleId,
+                BookId = BookId,
                 Year = viewModel.year,
                 Quarter = viewModel.quarter,
                 Month = viewModel.month,
@@ -156,11 +165,17 @@ namespace Gp_Api.Services
                 IsAgsBooking = viewModel.is_ags_booking,
                 CustomerId = viewModel.customer_id,
                 AgsStatus = viewModel.ags_status,
+
+                // 寫入前端傳來的日期
+                LongshotDate = viewModel.longshot_date,
+                BcdDate = viewModel.bcd_date,
+                CommitDate = viewModel.commit_date,
+
                 UnderControlLongshotYearQ = viewModel.under_control_longshot_year_q,
                 SolutionMapping = viewModel.solution_mapping,
                 SalesOwner = viewModel.sales_owner,
                 ServiceOwner = viewModel.service_owner,
-                CreatedAt = DateTime.Now // 雖然 DB 有 Default，但程式給值較安全
+                CreatedAt = DateTime.Now
             };
             try
             {
@@ -169,9 +184,9 @@ namespace Gp_Api.Services
             }
             catch (Exception ex)
             {
-                var a= ex.InnerException != null ? $"{ex.Message}\nInner:{ex.InnerException.Message}" : ex.Message;
+                var msg = ex.InnerException != null ? $"{ex.Message}\nInner:{ex.InnerException.Message}" : ex.Message;
+                // 這裡可以考慮寫入 Log
             }
-
         }
 
         public string DeleteData(int id)
@@ -207,6 +222,12 @@ namespace Gp_Api.Services
             data.IsAgsBooking = viewModel.is_ags_booking;
             data.CustomerId = viewModel.customer_id;
             data.AgsStatus = viewModel.ags_status;
+
+            // 更新為前端傳過來的日期數值（提供手動編輯能力）
+            data.LongshotDate = viewModel.longshot_date;
+            data.BcdDate = viewModel.bcd_date;
+            data.CommitDate = viewModel.commit_date;
+
             data.UnderControlLongshotYearQ = viewModel.under_control_longshot_year_q;
             data.SolutionMapping = viewModel.solution_mapping;
             data.SalesOwner = viewModel.sales_owner;

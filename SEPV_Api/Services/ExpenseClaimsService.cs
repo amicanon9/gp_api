@@ -33,6 +33,7 @@ namespace Gp_Api.Services
         public decimal total_amount { get; set; }
         public DateTime? created_at { get; set; }
         public DateTime? updated_at { get; set; }
+        public string transportation { get; set; }
     }
     #endregion
 
@@ -111,7 +112,8 @@ namespace Gp_Api.Services
                 ManualAmount = viewModel.manual_amount,
                 TotalAmount = viewModel.total_amount,
                 CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
+                UpdatedAt = DateTime.Now,
+                Transportation = viewModel.transportation,
             };
 
             _PMSContext.ExpenseClaims.Add(data);
@@ -145,7 +147,7 @@ namespace Gp_Api.Services
             // 重新計算總金額
             data.TotalAmount = viewModel.total_amount;
             data.UpdatedAt = DateTime.Now;
-
+            data.Transportation = viewModel.transportation;
             try
             {
                 _PMSContext.SaveChanges();
@@ -213,7 +215,8 @@ namespace Gp_Api.Services
                 manual_amount = t.ManualAmount,
                 total_amount = t.TotalAmount,
                 created_at = t.CreatedAt,
-                updated_at = t.UpdatedAt
+                updated_at = t.UpdatedAt,
+                transportation = t.Transportation,
             };
         }
         #endregion

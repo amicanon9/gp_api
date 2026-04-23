@@ -28,6 +28,7 @@ namespace Gp_Api.Services
         public string content { get; set; }
         public string content_detail { get; set; }
         public string ags_status { get; set; }
+        public string ags_description { get; set; }
         public DateTime? created_at { get; set; }
     }
 
@@ -106,12 +107,80 @@ namespace Gp_Api.Services
                 Week = viewModel.week,
                 Content = viewModel.content,
                 ContentDetail = viewModel.content_detail,
-                AgsStatus=viewModel.ags_status,
+                AgsStatus = viewModel.ags_status,
                 CreatedAt = DateTime.Now
             };
 
             _PMSContext.WeeklyReportPlm.Add(data);
             _PMSContext.SaveChanges();
+
+            // 新增後，同步更新 ProjectPlm.AgsStatus
+            SyncProjectAgsStatus(viewModel.project_id);
+        }
+
+        public string EditData(int id, WeeklyReportPlmView viewModel)
+        {
+            var data = _PMSContext.WeeklyReportPlm.Find(id);
+            if (data == null) return "NotFound";
+
+            data.Year = viewModel.year;
+            data.Week = viewModel.week;
+            data.Content = viewModel.content;
+            data.UpdatedAt = DateTime.Now;
+            data.ContentDetail = viewModel.content_detail;
+            data.AgsStatus = viewModel.ags_status;
+
+            try
+            {
+                _PMSContext.SaveChanges();
+
+                // 編輯後，同步更新 ProjectPlm.AgsStatus
+                SyncProjectAgsStatus(data.ProjectId);
+
+                return "OK";
+            }
+            catch (Exception ex)
+            {
+                return ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+            }
+        }
+
+        // 抽出共用邏輯：找最新週報並同步至 ProjectPlm
+        private void SyncProjectAgsStatus(int projectId)
+        {
+            // 取得該專案最新一筆週報（依 Year 降冪、Week 降冪）
+            var latestReport = _PMSContext.WeeklyReportPlm
+                .Where(t => t.ProjectId == projectId)
+                .OrderByDescending(t => t.Year)
+                .ThenByDescending(t => t.Week)
+                .FirstOrDefault();
+            if (latestReport == null) return;
+
+            var project = _PMSContext.ProjectPlm.Find(projectId);
+            if (project == null) return;
+
+            // 只有當狀態有變動才更新
+            if (project.AgsStatus != latestReport.AgsStatus)
+            {
+                project.AgsStatus = latestReport.AgsStatus;
+
+                // 根據新狀態記錄對應時間點
+                var now = DateTime.Now;
+                switch (latestReport.AgsStatus)
+                {
+                    case "A2": // Commit
+                        project.CommitDate = now;
+                        break;
+                    case "A4": // BCD
+                        project.BcdDate = now;
+                        break;
+                    case "A5": // Longshot
+                        project.LongshotDate = now;
+                        break;
+                }
+
+                _PMSContext.SaveChanges();
+            }
         }
 
         public string DeleteData(int id)
@@ -131,26 +200,5 @@ namespace Gp_Api.Services
             }
         }
 
-        public string EditData(int id, WeeklyReportPlmView viewModel)
-        {
-            var data = _PMSContext.WeeklyReportPlm.Find(id);
-            if (data == null) return "NotFound";
-
-            data.Year = viewModel.year;
-            data.Week = viewModel.week;
-            data.Content = viewModel.content;
-            data.UpdatedAt = DateTime.Now;
-            data.ContentDetail = viewModel.content_detail;
-            data.AgsStatus = viewModel.ags_status;
-            try
-            {
-                _PMSContext.SaveChanges();
-                return "OK";
-            }
-            catch (Exception ex)
-            {
-                return ex.InnerException != null ? ex.InnerException.Message : ex.Message;
-            }
-        }
     }
 }
