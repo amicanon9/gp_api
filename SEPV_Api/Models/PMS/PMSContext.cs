@@ -19,6 +19,8 @@ public partial class PMSContext : DbContext
 
     public virtual DbSet<CodeLookupSource> CodeLookupSource { get; set; }
 
+    public virtual DbSet<Customer2Check> Customer2Check { get; set; }
+
     public virtual DbSet<CustomerPlm> CustomerPlm { get; set; }
 
     public virtual DbSet<Departments> Departments { get; set; }
@@ -36,6 +38,8 @@ public partial class PMSContext : DbContext
     public virtual DbSet<LoginRoles> LoginRoles { get; set; }
 
     public virtual DbSet<LoginRolesMenus> LoginRolesMenus { get; set; }
+
+    public virtual DbSet<Project2Check> Project2Check { get; set; }
 
     public virtual DbSet<ProjectFirm> ProjectFirm { get; set; }
 
@@ -129,6 +133,83 @@ public partial class PMSContext : DbContext
             entity.Property(e => e.Description)
                 .HasMaxLength(50)
                 .HasColumnName("description");
+        });
+
+        modelBuilder.Entity<Customer2Check>(entity =>
+        {
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Contact)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("contact");
+            entity.Property(e => e.Contact2)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("contact2");
+            entity.Property(e => e.Contact3)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("contact3");
+            entity.Property(e => e.Contact4)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("contact4");
+            entity.Property(e => e.Contact5)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("contact5");
+            entity.Property(e => e.DecisionLevel)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("decision_level");
+            entity.Property(e => e.Description)
+                .HasMaxLength(500)
+                .IsUnicode(false)
+                .HasColumnName("description");
+            entity.Property(e => e.Email)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("email");
+            entity.Property(e => e.Email2)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("email2");
+            entity.Property(e => e.Email3)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("email3");
+            entity.Property(e => e.Email4)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("email4");
+            entity.Property(e => e.Email5)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("email5");
+            entity.Property(e => e.Name)
+                .HasMaxLength(50)
+                .HasColumnName("name");
+            entity.Property(e => e.TaxIdNo).HasColumnName("tax_id_no");
+            entity.Property(e => e.Telephone)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("telephone");
+            entity.Property(e => e.Telephone2)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("telephone2");
+            entity.Property(e => e.Telephone3)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("telephone3");
+            entity.Property(e => e.Telephone4)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("telephone4");
+            entity.Property(e => e.Telephone5)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("telephone5");
         });
 
         modelBuilder.Entity<CustomerPlm>(entity =>
@@ -514,6 +595,51 @@ public partial class PMSContext : DbContext
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_login_roles_menus_login_roles");
+        });
+
+        modelBuilder.Entity<Project2Check>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__project__2Check");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.BookId).HasColumnName("book_id");
+            entity.Property(e => e.CloseDate)
+                .HasColumnType("date")
+                .HasColumnName("close_date");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasAnnotation("Relational:DefaultConstraintName", "DF__project__created__2Check")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.CustomerId).HasColumnName("customer_id");
+            entity.Property(e => e.Month).HasColumnName("month");
+            entity.Property(e => e.Quarter)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("quarter");
+            entity.Property(e => e.RoleId).HasColumnName("role_id");
+            entity.Property(e => e.Status)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("status");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_at");
+            entity.Property(e => e.Year).HasColumnName("year");
+
+            entity.HasOne(d => d.Book).WithMany(p => p.Project2Check)
+                .HasForeignKey(d => d.BookId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Project2Check_set_of_books");
+
+            entity.HasOne(d => d.Customer).WithMany(p => p.Project2Check)
+                .HasForeignKey(d => d.CustomerId)
+                .HasConstraintName("FK_Project2Check_Customer2Check");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.Project2Check)
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Project2Check_login_roles");
         });
 
         modelBuilder.Entity<ProjectFirm>(entity =>

@@ -31,6 +31,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[Customer2Check]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[CustomerPLM]",
          "ObjectType": 0
       },
@@ -64,6 +68,10 @@
       },
       {
          "Name": "[dbo].[login_roles_menus]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Project2Check]",
          "ObjectType": 0
       },
       {

@@ -23,6 +23,8 @@ public partial class SetOfBooks
 
     public virtual ICollection<LoginRoles> LoginRoles { get; set; } = new List<LoginRoles>();
 
+    public virtual ICollection<Project2Check> Project2Check { get; set; } = new List<Project2Check>();
+
     public virtual ICollection<ProjectFirm> ProjectFirm { get; set; } = new List<ProjectFirm>();
 
     public virtual ICollection<ProjectInternal> ProjectInternal { get; set; } = new List<ProjectInternal>();

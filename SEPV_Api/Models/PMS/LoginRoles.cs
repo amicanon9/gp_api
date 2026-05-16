@@ -27,5 +27,7 @@ public partial class LoginRoles
 
     public virtual ICollection<LoginRolesMenus> LoginRolesMenus { get; set; } = new List<LoginRolesMenus>();
 
+    public virtual ICollection<Project2Check> Project2Check { get; set; } = new List<Project2Check>();
+
     public virtual ICollection<ProjectPlm> ProjectPlm { get; set; } = new List<ProjectPlm>();
 }
