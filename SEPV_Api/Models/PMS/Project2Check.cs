@@ -29,6 +29,8 @@ public partial class Project2Check
 
     public DateTime? UpdatedAt { get; set; }
 
+    public string Description { get; set; }
+
     public virtual SetOfBooks Book { get; set; }
 
     public virtual Customer2Check Customer { get; set; }

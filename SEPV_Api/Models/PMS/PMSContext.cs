@@ -612,6 +612,9 @@ public partial class PMSContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
             entity.Property(e => e.CustomerId).HasColumnName("customer_id");
+            entity.Property(e => e.Description)
+                .IsUnicode(false)
+                .HasColumnName("description");
             entity.Property(e => e.Month).HasColumnName("month");
             entity.Property(e => e.Quarter)
                 .HasMaxLength(10)

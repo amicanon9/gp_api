@@ -30,6 +30,7 @@ namespace Gp_Api.Services
         public int? customer_id { get; set; }
         public string status { get; set; }
         public string customer_name { get; set; }
+        public string description { get; set; }
     }
 
     public class Project2CheckService : IProject2CheckService
@@ -58,6 +59,7 @@ namespace Gp_Api.Services
                 month = t.Month,
                 close_date = t.CloseDate,
                 customer_id = t.CustomerId,
+                    description = t.Description,
                 status = t.Status,
                 customer_name = t.Customer != null ? t.Customer.Name : "",
             });
@@ -81,6 +83,7 @@ namespace Gp_Api.Services
                 Month = data.month,
                 CloseDate = data.close_date,
                 CustomerId = data.customer_id,
+                Description = data.description,
                 Status = data.status,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now
@@ -99,6 +102,7 @@ namespace Gp_Api.Services
             item.Month = data.month;
             item.CloseDate = data.close_date;
             item.CustomerId = data.customer_id;
+            item.Description = data.description;
             item.Status = data.status;
             item.UpdatedAt = DateTime.Now;
 
