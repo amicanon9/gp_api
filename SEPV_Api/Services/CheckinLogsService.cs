@@ -65,10 +65,9 @@ namespace Gp_Api.Services
 
         public List<CheckinLogsView> GetDataById(int id)
         {
-            DateTime oneMonthAgo = DateTime.Now.AddMonths(-2);
 
             return _PMSContext.CheckinLogs
-                .Where(t => t.UserId == UserId && t.BookId == BookId && t.CheckinTime >= oneMonthAgo)
+                .Where(t => t.UserId == UserId && t.BookId == BookId)
                 .OrderByDescending(t => t.CheckinTime)
                 .Select(t => new CheckinLogsView
                 {
@@ -83,7 +82,7 @@ namespace Gp_Api.Services
                     status = t.Status,
                     created_at = t.CreatedAt,
                     work_percentage = t.WorkPercentage
-                }).Take(60).ToList();
+                }).ToList();
         }
 
         public void InsertData(List<CheckinLogsView> viewModelList)
